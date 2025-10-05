@@ -1,4 +1,4 @@
-// const API_KEY = "ENTER_API_KEY"
+const API_KEY = "a6358f7b486c982d7b033fff0ff5581d"
 const API_ROOT = "https://ws.audioscrobbler.com/2.0/";
 
 const fetchAlbums = async (artistName) => {
@@ -26,11 +26,15 @@ const fetchAlbums = async (artistName) => {
 
     const container = document.getElementsByClassName("container")[0];
     container.appendChild(albumContainer);
-
   } catch (error) {
     console.error("Error fetching albums:", error);
   }
 };
 
-console.log("hello");
-fetchAlbums("The Beatles");
+document.getElementById("search-btn").addEventListener("click", () => {
+  const artist = document.getElementById("artist-input").value.trim();
+  if (artist) fetchAlbums(artist);
+});
+
+// console.log("hello");
+// fetchAlbums("The Beatles");
