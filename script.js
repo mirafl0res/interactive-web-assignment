@@ -206,128 +206,97 @@ const getTagTopArtists = async (tagName, limit = 10) => {
 
   return data?.topartists?.artist || [];
 };
+
+
 // ====== TESTING ======
-
+/*
 const main = async () => {
-  // const info = await getAlbumInfo("Kanye West", "Graduation");
-  // console.log(info);
+  const info = await getAlbumInfo("Kanye West", "Graduation");
+  console.log(info);
 
-  // const results = await searchAlbum("Graduation");
-  // console.log(results);
+  const results = await searchAlbum("Graduation");
+  console.log(results);
   const findArtist = await searchArtist("James Brown");
   console.log(findArtist);
 
-  // const artistInfo = await getArtistInfo("James Brown");
-  // console.log(artistInfo);
-  // const tags = await getAlbumTopTags("Kanye West", "Graduation");
-  // console.log(tags);
+  const artistInfo = await getArtistInfo("James Brown");
+  console.log(artistInfo);
+  const tags = await getAlbumTopTags("Kanye West", "Graduation");
+  console.log(tags);
 };
-
 main();
-
-/*
-// Album methods
-album.getInfo
-album.search
-album.getTopTags
-
-// Artist methods
-artist.getInfo
-artist.getSimilar
-artist.getTopAlbums
-artist.getTopTracks
-artist.search
-artist.getTopTags
-
-// Chart methods
-chart.getTopArtists
-chart.getTopTracks
-chart.getTopTags
-
-// Geo methods
-geo.getTopArtists
-geo.getTopTracks
-
-// Tag methods
-tag.getInfo
-tag.getSimilar
-tag.getTopAlbums
-tag.getTopArtists
-tag.getTopTags
-tag.getTopTracks
-tag.getWeeklyChartList
-
-// Track methods
-track.getInfo
-track.getSimilar
-track.getTopTags
-track.search
 */
+// ======================
+// Display artist page
+const displayArtistPage = async (artistName) => {
+  // Fetch artist info
+  const artist = await getArtistInfo(artistName);
+  document.querySelector(".artist-page .artist-name").textContent = artist.artist;
+  document.querySelector(".artist-page .artist-bio").textContent = artist.bioSummary;
 
-/*
-const getTopAlbums = async (artistName) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const data = await fetchFromLastFm("artist.gettopalbums", {
-    artist: encodedArtist,
+  // Artist image: pick medium size
+  const artistImg = artist.images.find(img => img.size === "medium")?.["#text"] || "";
+  document.querySelector(".artist-page .artist-image").src = artistImg;
+
+  // Top albums
+  const topAlbums = await getArtistTopAlbums(artistName);
+  const albumsContainer = document.querySelector(".artist-top-albums");
+  albumsContainer.innerHTML = ""; // clear previous
+  topAlbums.forEach((album) => {
+    const albumImg = album.images.find(img => img.size === "medium")?.["#text"] || "";
+    const div = document.createElement("div");
+    div.className = "album-card";
+
+    // Create elements instead of inline JS
+    const imgEl = document.createElement("img");
+    imgEl.src = albumImg;
+    imgEl.alt = album.name;
+
+    const pEl = document.createElement("p");
+    pEl.textContent = album.name;
+
+    div.appendChild(imgEl);
+    div.appendChild(pEl);
+    albumsContainer.appendChild(div);
   });
 
-  return data.topalbums?.album || [];
-};
-
-const getAlbumInfo = async (artistName, albumName) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const encodedAlbum = encodeURIComponent(albumName);
-  const data = await fetchFromLastFm("album.getinfo", {
-    artist: encodedArtist,
-    album: encodedAlbum,
+  // Top tracks
+  const topTracks = await getArtistTopTracks(artistName);
+  const tracksContainer = document.querySelector(".artist-top-tracks");
+  tracksContainer.innerHTML = "";
+  topTracks.forEach((track) => {
+    const div = document.createElement("div");
+    div.className = "track-card";
+    div.textContent = `${track.name} (${track.playcount} plays)`;
+    tracksContainer.appendChild(div);
   });
-
-  // Handle missing fields safely
-  const album = data.album || {};
-
-  const name = album.name || "Unknown Album";
-  const artist = album.artist || "Unknown Artist";
-  const playcount = album.playcount || 0;
-  const wikiSummary = album.wiki?.summary || "No description available";
-  const releaseDate = album.releaseDate || "Unknown";
-  const mbid = album.mbid || "Not available";
-
-  // console.log(data.album);
-
-  return { name, artist, playcount, wikiSummary, releaseDate, mbid };
 };
 
-// -- 4. DATA MERGING LOGIC ---
+// ----- EVENT LISTENER FOR SEARCH -----
+const searchBtn = document.getElementById("search-btn");
+const artistInput = document.getElementById("artist-input");
 
-// --- 5. APP LOGIC ---
+searchBtn.addEventListener("click", () => {
+  const artistName = artistInput.value.trim();
+  if (artistName) {
+    displayArtistPage(artistName);
+  }
+});
 
-*/
-// --- 6. TESTING UTILITIES ---
-// const testMethod = async (method, params) => {
-//   const data = await fetchFromLastFm(method, params);
-//   console.log(`--- Response for ${method} ---`);
-//   console.dir(data, { depth: null }); // Show entire object
-// };
+// Optionally, allow pressing Enter in the input field
+artistInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const artistName = artistInput.value.trim();
+    if (artistName) {
+      displayArtistPage(artistName);
+    }
+  }
+});
 
-// Example usage:
 
-// (async () => {
-//   await testMethod("album.getinfo", {
-//     artist: "Kanye West",
-//     album: "Graduation",
-//   });
 
-// await testMethod("artist.gettopalbums", {
-//   artist: "Kanye West",
+// ----- DEFAULT ARTIST ON PAGE LOAD -----
+// document.addEventListener("DOMContentLoaded", () => {
+//   const defaultArtist = "Radiohead"; // or any artist you want
+//   displayArtistPage(defaultArtist);
 // });
-
-// await testMethod("track.getInfo", {
-//   artist: "Kanye West",
-//   track: "Stronger",
-// });
-
-// await testMethod("artist.getsimilar", {
-//   artist: "Kanye West",
-//   limit: 5,
-// });
-// })();
