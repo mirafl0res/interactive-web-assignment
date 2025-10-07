@@ -352,8 +352,6 @@ const getChartTopArtists = async (limit = 20) => {
   }));
 };
 
-
-
 const getChartTopTracks = async (limit = 20) => {
   const data = await fetchFromLastFm("chart.gettoptracks", {
     limit,
@@ -467,8 +465,6 @@ const getTrackTopTags = async (artistName, trackName, limit = 10) => {
   }));
 };
 
-
-
 // ----- 5. APP LOGIC -----
 
 // ====== TESTING ======
@@ -486,3 +482,38 @@ const main = async () => {
   const tags = await getAlbumTopTags("Kanye West", "Graduation");
   console.log(tags);
 };
+
+// --------------------------------
+// UI: Home, Search, Results, Pages
+// --------------------------------
+
+// document.addEventListener("DOMContentLoaded", () => {});
+const searchBtn = document.getElementById("search-btn");
+const searchInput = document.getElementById("search-input");
+const searchType = document.getElementById("search-type");
+
+const performSearch = async (query, type) => {
+  let results = [];
+  if (type === "artist") {
+    results = await searchArtist(query);
+  } else if (type === "album") {
+    results = await searchAlbum(query);
+  } else if (type === "track") {
+    results = await searchTrack(query);
+  }
+  displaySearchResults(results, type);
+};
+
+searchBtn.addEventListener("click", () => {
+  const query = searchInput.value.trim();
+  const type = searchType.value;
+  if (!query) return;
+
+  if (type === "artist") {
+    performSearch(query, "artist");
+  } else if (type === "album") {
+    performSearch(query, "album");
+  } else if (type === "track") {
+    performSearch(query, "track");
+  }
+});
