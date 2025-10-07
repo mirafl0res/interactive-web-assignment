@@ -486,4 +486,3 @@ const main = async () => {
   const tags = await getAlbumTopTags("Kanye West", "Graduation");
   console.log(tags);
 };
-
