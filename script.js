@@ -7,6 +7,7 @@ const headers = {
     "Good Vibrations/1.0 (https://github.com/mirafl0res/interactive-web-assignment.git)",
 };
 
+/*
 const METHODS = {
   album: ["getInfo", "search", "getTopTags"],
   artist: [
@@ -30,6 +31,7 @@ const METHODS = {
   ],
   track: ["getInfo", "getSimilar", "getTopTags", "search"],
 };
+*/
 
 // ----- 2. GENERIC HELP FETCHERS -----
 const fetchFromLastFm = async (method, params = {}) => {
@@ -60,7 +62,7 @@ const fetchFromLastFm = async (method, params = {}) => {
     console.error(`Error fetching from Last.fm (${method})`, error);
   }
 };
-
+/*
 const fetchFromMusicBrainz = async (endpoint, params = {}) => {
   const queryParams = new URLSearchParams({
     fmt: "json",
@@ -83,7 +85,7 @@ const fetchFromMusicBrainz = async (endpoint, params = {}) => {
     console.error(`Error fetching from MusicBrainz (${endpoint}):`, error);
   }
 };
-
+*/
 // ----- 3. API SPECIFIC FUNCTIONS -----
 
 // ----- Album Methods -----
@@ -108,10 +110,11 @@ const getAlbumInfo = async (artistName, albumName) => {
     tags: album.tags?.tag || [],
     url: album.url || "#",
     images: album.image || [],
+    tracks: album.tracks?.track || [],
   };
 };
 
-const searchAlbum = async (albumName, limit = 30) => {
+const searchAlbum = async (albumName, limit = 20) => {
   const encodedAlbum = encodeURIComponent(albumName);
   const data = await fetchFromLastFm("album.search", {
     album: encodedAlbum,
@@ -119,8 +122,34 @@ const searchAlbum = async (albumName, limit = 30) => {
     page: 1,
   });
 
-  return data?.results?.albummatches?.album || [];
+  const albums = data?.results?.albummatches?.album || [];
+
+  return albums.map((album) => ({
+    name: album.name,
+    artist: album.artist,
+    mbid: album.mbid || "Not available",
+    url: album.url,
+    images: album.image || [],
+  }));
 };
+
+const getAlbumTopTags = async (artistName, albumName, limit = 10) => {
+  const encodedArtist = encodeURIComponent(artistName);
+  const encodedAlbum = encodeURIComponent(albumName);
+  const data = await fetchFromLastFm("album.gettoptags", {
+    artist: encodedArtist,
+    album: encodedAlbum,
+    limit,
+    page: 1,
+  });
+
+  const topTags = data?.toptags?.tag || [];
+
+  return topTags.map((tag) => ({
+    name: tag.name,
+    url: tag.url,
+  }));
+}
 
 // ----- Artist Methods ------
 const getArtistInfo = async (artistName) => {
@@ -165,7 +194,7 @@ const getArtistTopAlbums = async (artistName, limit = 20) => {
   }));
 };
 
-const getArtistTopTracks = async (artistName, limit = 10) => {
+const getArtistTopTracks = async (artistName, limit = 20) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.gettoptracks", {
     artist: encodedArtist,
@@ -184,7 +213,7 @@ const getArtistTopTracks = async (artistName, limit = 10) => {
   }));
 };
 
-const searchArtist = async (artistName, limit = 5) => {
+const searchArtist = async (artistName, limit = 20) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.search", {
     artist: encodedArtist,
@@ -192,24 +221,257 @@ const searchArtist = async (artistName, limit = 5) => {
     page: 1,
   });
 
-  return data?.results?.artistmatches?.artist || [];
+  const artists = data?.results?.artistmatches?.artist || [];
+
+  return artists.map((artist) => ({
+    artist: artist.name,
+    mbid: artist.mbid || "Not available",
+    url: artist.url,
+    images: artist.image || [],
+  }));
 };
 
-// ----- Tag Methods -----
-const getTagTopArtists = async (tagName, limit = 10) => {
-  const encodedtagName = encodeURIComponent(tagName);
-  const data = await fetchFromLastFm("tag.gettopartists", {
-    tag: encodedtagName,
+const getSimilarArtists = async (artistName, limit = 20) => {
+  const encodedArtist = encodeURIComponent(artistName);
+  const data = await fetchFromLastFm("artist.getSimilar", {
+    artist: encodedArtist,
     limit,
     page: 1,
   });
 
-  return data?.topartists?.artist || [];
+  const artists = data?.similarartists?.artist || [];
+
+  return artists.map((artist) => ({
+    artist: artist.name || "Unknown Artist",
+    mbid: artist.mbid,
+    url: artist.url || "#",
+    images: artist.image || [],
+  }));
+};
+
+const getArtistTopTags = async (artistName, limit = 10) => {
+  const encodedArtist = encodeURIComponent(artistName);
+  const data = await fetchFromLastFm("artist.gettoptags", {
+    artist: encodedArtist,
+    limit,
+    page: 1,
+  });
+
+  const topTags = data?.toptags?.tag || [];
+
+  return topTags.map((tag) => ({
+    name: tag.name,
+    url: tag.url,
+  }));
+};
+
+// ----- Tag Methods -----
+const getTagTopArtists = async (tagName, limit = 20) => {
+  const encodedTagName = encodeURIComponent(tagName);
+  const data = await fetchFromLastFm("tag.gettopartists", {
+    tag: encodedTagName,
+    limit,
+    page: 1,
+  });
+
+  const tagTopArtists = data?.topartists?.artist || [];
+
+  return tagTopArtists.map((artist) => ({
+    artist: artist.name || "Unknown Artist",
+    mbid: artist.mbid || "Not available",
+    url: artist.url || "#",
+    artistRank: artist["@attr"]?.rank || 0,
+  }));
+};
+
+const getTagTopAlbums = async (tagName, limit = 20) => {
+  const encodedTagName = encodeURIComponent(tagName);
+  const data = await fetchFromLastFm("tag.getTopAlbums", {
+    tag: encodedTagName,
+    limit,
+    page: 1,
+  });
+
+  const topAlbums = data?.albums?.album || [];
+
+  return topAlbums.map((album) => ({
+    name: album.name || "Unknown album",
+    mbid: album.mbid || "Not available",
+    url: album.url || "#",
+    artist: album.artist?.name || "Unknown Artist",
+    albumRank: album["@attr"]?.rank || 0,
+  }));
+};
+
+const getTopTags = async (tagName, limit = 20) => {
+  const encodedTagName = encodeURIComponent(tagName);
+  const data = await fetchFromLastFm("tag.getTopTags", {
+    tag: encodedTagName,
+    limit,
+    page: 1,
+  });
+
+  const topTags = data?.toptags?.tag || [];
+
+  return topTags.map((tag) => ({
+    name: tag.name,
+    tagCount: tag.count,
+  }));
+};
+
+const getSimilarTags = async (tagName, limit = 20) => {
+  const encodedTagName = encodeURIComponent(tagName);
+  const data = await fetchFromLastFm("tag.getSimilar", {
+    tag: encodedTagName,
+    limit,
+    page: 1,
+  });
+
+  const similarTags = data?.similartags?.tag || [];
+
+  return similarTags.map((tag) => ({
+    name: tag.name,
+    url: tag.url,
+  }));
+};
+
+// ----- Chart Methods -----
+const getChartTopArtists = async (limit = 20) => {
+  const data = await fetchFromLastFm("chart.gettopartists", {
+    limit,
+    page: 1,
+  });
+
+  const topArtists = data?.artists?.artist || [];
+
+  return topArtists.map((artist) => ({
+    name: artist.name,
+    mbid: artist.mbid || "Not available",
+    url: artist.url || "#",
+    artistRank: artist["@attr"]?.rank || 0,
+  }));
 };
 
 
+
+const getChartTopTracks = async (limit = 20) => {
+  const data = await fetchFromLastFm("chart.gettoptracks", {
+    limit,
+    page: 1,
+  });
+
+  const topTracks = data?.tracks?.track || [];
+
+  return topTracks.map((track) => ({
+    name: track.name || "Unknown Track",
+    artist: track.artist?.name || "Unknown Artist",
+    mbid: track.mbid || "Not available",
+    url: track.url || "#",
+    trackRank: track["@attr"]?.rank || 0,
+  }));
+};
+
+const getChartTopTags = async (limit = 20) => {
+  const data = await fetchFromLastFm("chart.gettoptags", {
+    limit,
+    page: 1,
+  });
+
+  const topTags = data?.tags?.tag || [];
+
+  return topTags.map((tag) => ({
+    name: tag.name,
+    url: tag.url,
+    tagCount: tag.count || 0,
+  }));
+};
+
+const getChartTopAlbums = async (limit = 20) => {
+  const data = await fetchFromLastFm("chart.gettopalbums", {
+    limit,
+    page: 1,
+  });
+
+  const topAlbums = data?.albums?.album || [];
+
+  return topAlbums.map((album) => ({
+    name: album.name || "Unknown Album",
+    artist: album.artist?.name || album.artist || "Unknown Artist",
+    mbid: album.mbid || "Not available",
+    url: album.url || "#",
+    images: album.image || [],
+    albumRank: album["@attr"]?.rank || 0,
+  }));
+};
+
+// ----- Track Methods -----
+const getTrackInfo = async (artistName, trackName) => {
+  const encodedArtist = encodeURIComponent(artistName);
+  const encodedTrack = encodeURIComponent(trackName);
+
+  const data = await fetchFromLastFm("track.getinfo", {
+    artist: encodedArtist,
+    track: encodedTrack,
+  });
+
+  const track = data?.track || {};
+
+  return {
+    name: track.name || "Unknown Track",
+    artist: track.artist?.name || "Unknown Artist",
+    album: track.album?.title || "Unknown Album",
+    playcount: track.playcount || 0,
+    listeners: track.listeners || 0,
+    duration: track.duration || 0,
+    mbid: track.mbid || "Not available",
+    tags: track.toptags?.tag || [],
+    url: track.url || "#",
+    images: track.album?.image || [],
+  };
+};
+
+const searchTrack = async (trackName, limit = 20) => {
+  const encodedTrack = encodeURIComponent(trackName);
+  const data = await fetchFromLastFm("track.search", {
+    track: encodedTrack,
+    limit,
+    page: 1,
+  });
+
+  const tracks = data?.results?.trackmatches?.track || [];
+
+  return tracks.map((track) => ({
+    name: track.name,
+    artist: track.artist,
+    mbid: track.mbid || "Not available",
+    url: track.url,
+    images: track.image || [],
+  }));
+};
+
+const getTrackTopTags = async (artistName, trackName, limit = 10) => {
+  const encodedArtist = encodeURIComponent(artistName);
+  const encodedTrack = encodeURIComponent(trackName);
+  const data = await fetchFromLastFm("track.gettoptags", {
+    artist: encodedArtist,
+    track: encodedTrack,
+    limit,
+    page: 1,
+  });
+
+  const topTags = data?.toptags?.tag || [];
+
+  return topTags.map((tag) => ({
+    name: tag.name,
+    url: tag.url,
+  }));
+};
+
+
+
+// ----- 5. APP LOGIC -----
+
 // ====== TESTING ======
-/*
 const main = async () => {
   const info = await getAlbumInfo("Kanye West", "Graduation");
   console.log(info);
@@ -224,79 +486,4 @@ const main = async () => {
   const tags = await getAlbumTopTags("Kanye West", "Graduation");
   console.log(tags);
 };
-main();
-*/
-// ======================
-// Display artist page
-const displayArtistPage = async (artistName) => {
-  // Fetch artist info
-  const artist = await getArtistInfo(artistName);
-  document.querySelector(".artist-page .artist-name").textContent = artist.artist;
-  document.querySelector(".artist-page .artist-bio").textContent = artist.bioSummary;
 
-  // Artist image: pick medium size
-  const artistImg = artist.images.find(img => img.size === "medium")?.["#text"] || "";
-  document.querySelector(".artist-page .artist-image").src = artistImg;
-
-  // Top albums
-  const topAlbums = await getArtistTopAlbums(artistName);
-  const albumsContainer = document.querySelector(".artist-top-albums");
-  albumsContainer.innerHTML = ""; // clear previous
-  topAlbums.forEach((album) => {
-    const albumImg = album.images.find(img => img.size === "medium")?.["#text"] || "";
-    const div = document.createElement("div");
-    div.className = "album-card";
-
-    // Create elements instead of inline JS
-    const imgEl = document.createElement("img");
-    imgEl.src = albumImg;
-    imgEl.alt = album.name;
-
-    const pEl = document.createElement("p");
-    pEl.textContent = album.name;
-
-    div.appendChild(imgEl);
-    div.appendChild(pEl);
-    albumsContainer.appendChild(div);
-  });
-
-  // Top tracks
-  const topTracks = await getArtistTopTracks(artistName);
-  const tracksContainer = document.querySelector(".artist-top-tracks");
-  tracksContainer.innerHTML = "";
-  topTracks.forEach((track) => {
-    const div = document.createElement("div");
-    div.className = "track-card";
-    div.textContent = `${track.name} (${track.playcount} plays)`;
-    tracksContainer.appendChild(div);
-  });
-};
-
-// ----- EVENT LISTENER FOR SEARCH -----
-const searchBtn = document.getElementById("search-btn");
-const artistInput = document.getElementById("artist-input");
-
-searchBtn.addEventListener("click", () => {
-  const artistName = artistInput.value.trim();
-  if (artistName) {
-    displayArtistPage(artistName);
-  }
-});
-
-// Optionally, allow pressing Enter in the input field
-artistInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    const artistName = artistInput.value.trim();
-    if (artistName) {
-      displayArtistPage(artistName);
-    }
-  }
-});
-
-
-
-// ----- DEFAULT ARTIST ON PAGE LOAD -----
-// document.addEventListener("DOMContentLoaded", () => {
-//   const defaultArtist = "Radiohead"; // or any artist you want
-//   displayArtistPage(defaultArtist);
-// });
