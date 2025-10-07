@@ -18,15 +18,16 @@
       </nav>
 
       <!-- SEARCH FIELD ALWAYS VISIBLE -->
-      <div class="global-search">
-        <label for="search-input" class="sr-only">Search</label>
-        <input
-          type="text"
-          id="search-input"
-          placeholder="Search for artist, album or track..."
-        />
-        <button id="search-btn">Search</button>
-      </div>
+<div class="global-search">
+  <label for="search-input" class="sr-only">Search</label>
+  <input type="text" id="search-input" placeholder="Search..." />
+  <select id="search-type">
+    <option value="artist">Artist</option>
+    <option value="album">Album</option>
+    <option value="track">Song</option>
+  </select>
+  <button id="search-btn">Search</button>
+</div>
     </header>
 
     <!-- HOME PAGE -->
