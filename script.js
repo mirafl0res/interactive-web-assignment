@@ -149,7 +149,7 @@ const getAlbumTopTags = async (artistName, albumName, limit = 10) => {
     name: tag.name,
     url: tag.url,
   }));
-}
+};
 
 // ----- Artist Methods ------
 const getArtistInfo = async (artistName) => {
@@ -213,7 +213,7 @@ const getArtistTopTracks = async (artistName, limit = 20) => {
   }));
 };
 
-const searchArtist = async (artistName, limit = 20) => {
+const searchArtist = async (artistName, limit = 10) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.search", {
     artist: encodedArtist,
@@ -487,10 +487,81 @@ const main = async () => {
 // UI: Home, Search, Results, Pages
 // --------------------------------
 
-// document.addEventListener("DOMContentLoaded", () => {});
 const searchBtn = document.getElementById("search-btn");
 const searchInput = document.getElementById("search-input");
 const searchType = document.getElementById("search-type");
+const resultsContainer = document.getElementById("results-container");
+
+// Utility: explicit hide/show with ARIA sync
+const setHidden = (element, hidden = true) => {
+  if (!element) return;
+  element.classList.toggle("hidden", hidden);
+  element.setAttribute("aria-hidden", hidden ? "true" : "false");
+};
+
+setHidden(resultsContainer, true);
+
+const displaySearchResults = (results, type) => {
+  resultsContainer.innerHTML = "";
+
+  setHidden(resultsContainer, false);
+
+  if (!results || results.length === 0) {
+    resultsContainer.innerHTML = "<p>No results found.</p>";
+    return;
+  }
+
+  const list = document.createElement("ul");
+  list.classList.add("results-list");
+
+  results.forEach((item) => {
+    const li = document.createElement("li");
+    li.classList.add("result-item");
+  })
+  /*
+
+    // Create image element (if available)
+    const imageUrl =
+      item.images?.find((img) => img.size === "medium")?.["#text"] || "";
+
+    if (imageUrl) {
+      const img = document.createElement("img");
+      img.src = imageUrl;
+      img.alt = item.name || "Image";
+      li.appendChild(img);
+    }
+
+    // Main text info
+    const title = document.createElement("h3");
+    title.textContent = item.name || item.artist || "Unknown";
+    li.appendChild(title);
+
+    // Add extra info depending on search type
+    if (type === "album" && item.artist) {
+      const artist = document.createElement("p");
+      artist.textContent = `Artist: ${item.artist}`;
+      li.appendChild(artist);
+    } else if (type === "track" && item.artist) {
+      const artist = document.createElement("p");
+      artist.textContent = `Artist: ${item.artist}`;
+      li.appendChild(artist);
+    }
+
+    // Optional link to Last.fm
+    if (item.url) {
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.target = "_blank";
+      link.textContent = "View on Last.fm";
+      li.appendChild(link);
+    }
+
+    list.appendChild(li);
+  });
+
+  resultsContainer.appendChild(list);
+  */
+};
 
 const performSearch = async (query, type) => {
   let results = [];
