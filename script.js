@@ -3,13 +3,14 @@ const API_KEY = "a6358f7b486c982d7b033fff0ff5581d";
 const API_ROOT_LASTFM = "https://ws.audioscrobbler.com/2.0/";
 const API_ROOT_MB = "https://musicbrainz.org/ws/2/";
 const headers = {
-  "User-Agent":
+  "User-Agent": 
     "Good Vibrations/1.0 (https://github.com/mirafl0res/interactive-web-assignment.git)",
 };
 
 // ----- 2. GENERIC HELP FETCHERS -----
 const fetchFromLastFm = async (method, params = {}) => {
   const queryParams = new URLSearchParams({
+    
     method,
     api_key: API_KEY,
     format: "json",
@@ -361,14 +362,12 @@ const getChartTopTags = async (limit = 10) => {
 };
 
 const getChartTopAlbums = async (limit = 10) => {
-  const data = await fetchFromLastFm("chart.gettopalbums", {
-    limit,
-    page: 1,
-  });
-
-  const topAlbums = data?.albums?.album || [];
-
-  return topAlbums.map((album) => ({
+  const data = await fetchFromLastFm("chart.gettopalbums", { limit, page: 1 });
+  if (!data?.albums?.album) {
+    console.warn("No album data returned:", data);
+    return [];
+  }
+  return data.albums.album.map((album) => ({
     name: album.name || "Unknown Album",
     artist: album.artist?.name || album.artist || "Unknown Artist",
     mbid: album.mbid || "Not available",
@@ -377,6 +376,7 @@ const getChartTopAlbums = async (limit = 10) => {
     albumRank: album["@attr"]?.rank || 0,
   }));
 };
+
 
 // ----- Track Methods -----
 const getTrackInfo = async (artistName, trackName) => {
@@ -611,114 +611,154 @@ newSearchBtn.addEventListener("click", async () => {
   displayEnhancedSearchResults(results, searchTypeUsed);
 });
 
-const renderHomeChart = (items, chartType) => {
+// Render all top charts (artists, tracks, tags) together
+const renderHomeChart = async () => {
   const container = document.getElementById("home-chart-container");
   container.innerHTML = "";
 
-  const list = document.createElement("ol");
-  list.classList.add("home-chart-list");
+  // Create grid wrapper
+  const grid = document.createElement("div");
+  grid.classList.add("charts-grid");
+  container.appendChild(grid);
 
-  if (type === "tag") {
-    const heading = document.createElement("h2");
-    heading.textContent = `Top Artists for Tag: ${results.tagName}`;
-    resultsContainer.appendChild(heading);
+  // Fetch all 3 top lists
+  const [topArtists, topTracks, topTags] = await Promise.all([
+    getChartTopArtists(10),
+    getChartTopTracks(10),
+    getChartTopTags(10),
+  ]);
+
+  // Helper to create each chart section
+  const createChartSection = (title, items, chartType) => {
+    const section = document.createElement("div");
+    section.classList.add("chart-card");
+
+    const h3 = document.createElement("h3");
+    h3.textContent = title;
+    section.appendChild(h3);
 
     const list = document.createElement("ul");
-    list.classList.add("results-list");
+    list.classList.add("home-chart-list");
 
-    results.topArtists.forEach((artist) => {
+    items.forEach((item, index) => {
       const li = document.createElement("li");
-      li.classList.add("result-item");
-      li.textContent = artist.name;
+      li.classList.add("home-chart-item");
+
+      // No images in home list
+      li.innerHTML = `
+        <div class="chart-rank">${index + 1}</div>
+        <span>${item.name}${item.artist ? ` — ${item.artist}` : ""}</span>
+      `;
+
+      // Click handler for details
+      li.addEventListener("click", async () => {
+        setHidden(document.getElementById("home-section"), true);
+
+        if (chartType === "artists") {
+          const info = await getArtistInfo(item.name);
+          const section = document.getElementById("artist-section");
+          if (section) {
+            const imageUrl =
+              info.images?.find((img) => img.size === "extralarge")?.["#text"] || "";
+            section.innerHTML = `
+              <div class="artist-header">
+                ${
+                  imageUrl
+                    ? `<img class="artist-image" src="${imageUrl}" alt="${info.artist}" />`
+                    : `<div class="chart-emoji">🎵</div>`
+                }
+                <div class="artist-details">
+                  <h2 class="artist-name">${info.artist}</h2>
+                  <p><strong>Listeners:</strong> ${info.listeners}</p>
+                  <p><strong>Playcount:</strong> ${info.playcount}</p>
+                </div>
+              </div>
+              <div class="artist-info-section">
+                <p><strong>Bio:</strong> ${info.bioSummary}</p>
+                <div class="tags-container">
+                  ${info.tags.map((tag) => `<span class="tag-chip">${tag.name}</span>`).join("")}
+                </div>
+                <div class="similar-artists">
+                  <strong>Similar Artists:</strong>
+                  ${info.similarArtists.map((a) => `<span>${a.name}</span>`).join(", ")}
+                </div>
+                <a href="${info.url}" target="_blank">View on Last.fm</a>
+              </div>
+            `;
+            setHidden(section, false);
+            section.focus();
+          }
+        } else if (chartType === "tracks") {
+          const info = await getTrackInfo(item.artist, item.name);
+          const section = document.getElementById("track-section");
+          if (section) {
+            const imageUrl =
+              info.images?.find((img) => img.size === "extralarge")?.["#text"] || "";
+            section.innerHTML = `
+              <div class="album-header">
+                ${
+                  imageUrl
+                    ? `<img class="album-image" src="${imageUrl}" alt="${info.name}" />`
+                    : `<div class="chart-emoji">🎵</div>`
+                }
+                <div>
+                  <h2 class="album-name">${info.name}</h2>
+                  <p class="album-artist">By ${info.artist}</p>
+                </div>
+              </div>
+              <div class="album-info-section">
+                <p><strong>Listeners:</strong> ${info.listeners}</p>
+                <p><strong>Playcount:</strong> ${info.playcount}</p>
+                <div class="tags-container">
+                  ${info.tags.map((tag) => `<span class="tag-chip">${tag.name}</span>`).join("")}
+                </div>
+                <a href="${info.url}" target="_blank">View on Last.fm</a>
+              </div>
+            `;
+            setHidden(section, false);
+            section.focus();
+          }
+        } else if (chartType === "tags") {
+          const tagName = item.name;
+          const tagTopArtists = await getTagTopArtists(tagName);
+          const section = document.getElementById("tag-section");
+          if (section) {
+            section.innerHTML = `
+              <h2>Top Artists for Tag: ${tagName}</h2>
+              <ol>
+                ${tagTopArtists.map((a) => `<li>${a.artist}</li>`).join("")}
+              </ol>
+              <a href="https://www.last.fm/tag/${encodeURIComponent(tagName)}" target="_blank">
+                View on Last.fm
+              </a>
+            `;
+            setHidden(section, false);
+            section.focus();
+          }
+        }
+      });
+
       list.appendChild(li);
     });
 
-    resultsContainer.appendChild(list);
-    return;
-  }
+    section.appendChild(list);
+    grid.appendChild(section);
+  };
 
-  items.forEach((item) => {
-    const li = document.createElement("li");
-    li.classList.add("home-chart-item");
-
-    if (chartType === "artists") {
-      li.textContent = item.name;
-    } else if (chartType === "tracks") {
-      li.textContent = `${item.name} — ${item.artist}`;
-    } else if (chartType === "tags") {
-      li.textContent = item.name;
-    }
-
-    li.addEventListener("click", async () => {
-      if (chartType === "artists") {
-        const info = await getArtistInfo(item.name);
-        const section = document.getElementById("artist-section");
-        if (section) {
-          section.innerHTML = `
-            <h2>${info.artist}</h2>
-            <p><strong>Listeners:</strong> ${info.listeners}</p>
-            <p><strong>Playcount:</strong> ${info.playcount}</p>
-            <div><strong>Bio:</strong> ${info.bioSummary}</div>
-            <div><strong>Tags:</strong> ${info.tags
-              .map((tag) => tag.name)
-              .join(", ")}</div>
-            <div><strong>Similar Artists:</strong> ${info.similarArtists
-              .map((artist) => artist.name)
-              .join(", ")}</div>
-            <a href="${info.url}" target="_blank">View on Last.fm</a>
-          `;
-          setHidden(document.getElementById("home-section"), true);
-          setHidden(section, false);
-          section.focus();
-        }
-      } else if (chartType === "tracks") {
-        getTrackInfo(item.artist, item.name);
-        const section = document.getElementById("track-section");
-        if (section) {
-          const info = await getTrackInfo(item.artist, item.name);
-          section.innerHTML = `
-            <h2>${info.name}</h2>
-            <p><strong>Artist:</strong> ${info.artist}</p>
-            <p><strong>Album:</strong> ${info.album}</p>
-            <p><strong>Listeners:</strong> ${info.listeners}</p>
-            <p><strong>Playcount:</strong> ${info.playcount}</p>
-            <div><strong>Tags:</strong> ${info.tags
-              .map((tag) => tag.name)
-              .join(", ")}</div>
-            <a href="${info.url}" target="_blank">View on Last.fm</a>
-          `;
-          setHidden(document.getElementById("home-section"), true);
-          setHidden(section, false);
-          section.focus();
-        }
-      } else if (chartType === "tags") {
-        const tagName = item.name;
-        const tagTopArtists = await getTagTopArtists(tagName);
-        const section = document.getElementById("tag-section");
-        if (section) {
-          section.innerHTML = `
-            <h2>Top Artists for Tag: ${tagName}</h2>
-            <ol>
-              ${tagTopArtists
-                .map((artist) => `<li>${artist.artist}</li>`)
-                .join("")}
-            </ol>
-            <a href="https://www.last.fm/tag/${encodeURIComponent(
-              tagName
-            )}" target="_blank">View on Last.fm</a>
-          `;
-          setHidden(document.getElementById("home-section"), true);
-          setHidden(section, false);
-          section.focus();
-        }
-      }
-    });
-
-    list.appendChild(li);
-  });
-
-  container.appendChild(list);
+  // Build all sections
+  createChartSection("Top Artists", topArtists, "artists");
+  createChartSection("Top Tracks", topTracks, "tracks");
+  createChartSection("Top Tags", topTags, "tags");
 };
+
+// Run on load
+document.addEventListener("DOMContentLoaded", renderHomeChart);
+
+
+// Load charts automatically when home page loads
+document.addEventListener("DOMContentLoaded", renderHomeChart);
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   setHidden(document.getElementById("home-section"), false);
