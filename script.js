@@ -615,7 +615,7 @@ const renderHomeChart = (items, chartType) => {
   const list = document.createElement("ol");
   list.classList.add("home-chart-list");
 
-  if (type === "tag") {
+  if (chartType === "tag") {
     const heading = document.createElement("h2");
     heading.textContent = `Top Artists for Tag: ${results.tagName}`;
     resultsContainer.appendChild(heading);
@@ -759,5 +759,6 @@ const siteLogo = document.getElementById("site-logo");
     setHidden(document.getElementById("user-section"), true);
     setHidden(resultsContainer, true);
     setHidden(document.getElementById("home-section"), false);
+    document.getElementById("home-chart-container").innerHTML = "";
   });
 });
