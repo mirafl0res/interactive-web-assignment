@@ -538,7 +538,7 @@ setHidden(resultsContainer, true);
 
 const displaySearchResults = (results, type) => {
   resultsContainer.innerHTML = "";
-  
+
   setHidden(resultsContainer, false);
 
   if (!results || results.length === 0) {
@@ -552,9 +552,21 @@ const displaySearchResults = (results, type) => {
   results.forEach((item) => {
     const li = document.createElement("li");
     li.classList.add("result-item");
-    li.textContent = item.name || item.artist || "Unknown";
+
+    const decodedName = decodeURIComponent(item.name || "");
+    const decodedArtist = decodeURIComponent(item.artist || item.artist?.name || "");
+
+    if (type === "artist") {
+      li.textContent = decodedName || item.artist || item.name;
+    } else if (type === "album") {
+      li.textContent = `${decodedName} — ${decodedArtist}`;
+    } else if (type === "track") {
+      li.textContent = `${decodedName} — ${decodedArtist}`;
+    }
+
     list.appendChild(li);
   });
+
   resultsContainer.appendChild(list);
 };
 
@@ -567,19 +579,16 @@ const performSearch = async (query, type) => {
   } else if (type === "track") {
     results = await searchTrack(query);
   }
-  displaySearchResults(results, type);
+
+  console.log(results);
+  return { results, type };
 };
 
-searchBtn.addEventListener("click", () => {
+searchBtn.addEventListener("click", async () => {
   const query = searchInput.value.trim();
   const type = searchType.value;
   if (!query) return;
 
-  if (type === "artist") {
-    performSearch(query, "artist");
-  } else if (type === "album") {
-    performSearch(query, "album");
-  } else if (type === "track") {
-    performSearch(query, "track");
-  }
+  const { results, type: searchTypeUsed } = await performSearch(query, type);
+  displaySearchResults(results, searchTypeUsed);
 });
