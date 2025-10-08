@@ -457,6 +457,7 @@ setHidden(resultsContainer, true);
 const displaySearchResults = (results, type) => {
   resultsContainer.innerHTML = "";
   setHidden(resultsContainer, false);
+  resultsContainer.focus();
 
   setHidden(document.getElementById("artist-section"), true);
   setHidden(document.getElementById("album-section"), true);
@@ -468,9 +469,10 @@ const displaySearchResults = (results, type) => {
     resultsContainer.innerHTML = "<p>No results found.</p>";
     return;
   }
-
   const list = document.createElement("ul");
   list.classList.add("results-list");
+  list.setAttribute("role", "listbox"); // ARIA role
+  list.setAttribute("aria-label", `Search results for ${type}`);
   if (type === "tag") {
     const topArtistsHeading = document.createElement("h2");
     topArtistsHeading.textContent = `Top Artists For Tag: ${results[0].tagName}`;
@@ -480,6 +482,13 @@ const displaySearchResults = (results, type) => {
   results.forEach((item) => {
     const li = document.createElement("li");
     li.classList.add("result-item");
+    li.setAttribute("role", "option");
+    li.setAttribute("tabindex", "0"); // make focusable
+    li.addEventListener("keydown", async (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        li.click(); // allow keyboard selection
+      }
+    });
 
     const decodedName = decodeURIComponent(item.name || item.artist || "");
     const decodedArtist = decodeURIComponent(
@@ -524,6 +533,7 @@ const displaySearchResults = (results, type) => {
         <a href="${info.url}" target="_blank">View on Last.fm</a>
       `;
           setHidden(section, false);
+          section.focus();
         }
       } else if (type === "album") {
         const info = await getAlbumInfo(item.artist, item.name);
@@ -544,6 +554,7 @@ const displaySearchResults = (results, type) => {
         <a href="${info.url}" target="_blank">View on Last.fm</a>
       `;
           setHidden(section, false);
+          section.focus();
         }
       } else if (type === "track") {
         const info = await getTrackInfo(item.artist, item.name);
@@ -561,6 +572,7 @@ const displaySearchResults = (results, type) => {
         <a href="${info.url}" target="_blank">View on Last.fm</a>
       `;
           setHidden(section, false);
+          section.focus();
         }
       }
     });
@@ -654,6 +666,7 @@ const renderHomeChart = (items, chartType) => {
           `;
           setHidden(document.getElementById("home-section"), true);
           setHidden(section, false);
+          section.focus();
         }
       } else if (chartType === "tracks") {
         getTrackInfo(item.artist, item.name);
@@ -673,6 +686,7 @@ const renderHomeChart = (items, chartType) => {
           `;
           setHidden(document.getElementById("home-section"), true);
           setHidden(section, false);
+          section.focus();
         }
       } else if (chartType === "tags") {
         const tagName = item.name;
@@ -692,6 +706,7 @@ const renderHomeChart = (items, chartType) => {
           `;
           setHidden(document.getElementById("home-section"), true);
           setHidden(section, false);
+          section.focus();
         }
       }
     });
@@ -704,6 +719,7 @@ const renderHomeChart = (items, chartType) => {
 
 document.addEventListener("DOMContentLoaded", () => {
   setHidden(document.getElementById("home-section"), false);
+  searchInput.focus();
 });
 
 document.querySelectorAll(".home-buttons button").forEach((btn) => {
@@ -745,54 +761,3 @@ const siteLogo = document.getElementById("site-logo");
     setHidden(document.getElementById("home-section"), false);
   });
 });
-
-// ====== TESTING ======
-const main = async () => {
-  const info = await getAlbumInfo("Kanye West", "Graduation");
-  console.log(info);
-
-  const results = await searchAlbum("Graduation");
-  console.log(results);
-  const findArtist = await searchArtist("James Brown");
-  console.log(findArtist);
-
-  const artistInfo = await getArtistInfo("James Brown");
-  console.log(artistInfo);
-  const tags = await getAlbumTopTags("Kanye West", "Graduation");
-  console.log(tags);
-
-  const topAlbums = await getArtistTopAlbums("Kanye West");
-  console.log(topAlbums);
-  const topTracks = await getArtistTopTracks("Kanye West");
-  console.log(topTracks);
-
-  const similarArtists = await getSimilarArtists("Kanye West");
-  console.log(similarArtists);
-  const artistTags = await getArtistTopTags("Kanye West");
-  console.log(artistTags);
-
-  const tagArtists = await getTagTopArtists("rock");
-  console.log(tagArtists);
-  const tagAlbums = await getTagTopAlbums("rock");
-  console.log(tagAlbums);
-  const topTags = await getTopTags("rock");
-  console.log(topTags);
-  const similarTags = await getSimilarTags("rock");
-  console.log(similarTags);
-
-  const chartArtists = await getChartTopArtists();
-  console.log(chartArtists);
-  const chartTracks = await getChartTopTracks();
-  console.log(chartTracks);
-  const chartTags = await getChartTopTags();
-  console.log(chartTags);
-  const chartAlbums = await getChartTopAlbums();
-  console.log(chartAlbums);
-
-  const trackInfo = await getTrackInfo("Kanye West", "Stronger");
-  console.log(trackInfo);
-  const trackResults = await searchTrack("Stronger");
-  console.log(trackResults);
-  const trackTags = await getTrackTopTags("Kanye West", "Stronger");
-  console.log(trackTags);
-};
