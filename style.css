@@ -1112,21 +1112,22 @@ header {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 
+}
 
+#tag-section ol,
+.tag-section ol {
+  width: 100%;
+  margin-left: -200px;
 }
-#tag-section p,
-.tag-section p {
-  margin-bottom: 12px;
-}
+
 #tag-section a,
 .tag-section a {
+  display: inline-block;
+  margin-top: 600px;
+  
   color: var(--accent1);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.3s ease;
-}
-#tag-section a:hover,
-.tag-section a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
+    
+    }
