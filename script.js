@@ -114,7 +114,7 @@ const getAlbumInfo = async (artistName, albumName) => {
   };
 };
 
-const searchAlbum = async (albumName, limit = 20) => {
+const searchAlbum = async (albumName, limit = 5) => {
   const encodedAlbum = encodeURIComponent(albumName);
   const data = await fetchFromLastFm("album.search", {
     album: encodedAlbum,
@@ -133,7 +133,7 @@ const searchAlbum = async (albumName, limit = 20) => {
   }));
 };
 
-const getAlbumTopTags = async (artistName, albumName, limit = 10) => {
+const getAlbumTopTags = async (artistName, albumName, limit = 5) => {
   const encodedArtist = encodeURIComponent(artistName);
   const encodedAlbum = encodeURIComponent(albumName);
   const data = await fetchFromLastFm("album.gettoptags", {
@@ -194,7 +194,7 @@ const getArtistTopAlbums = async (artistName, limit = 20) => {
   }));
 };
 
-const getArtistTopTracks = async (artistName, limit = 20) => {
+const getArtistTopTracks = async (artistName, limit = 10) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.gettoptracks", {
     artist: encodedArtist,
@@ -213,7 +213,7 @@ const getArtistTopTracks = async (artistName, limit = 20) => {
   }));
 };
 
-const searchArtist = async (artistName, limit = 10) => {
+const searchArtist = async (artistName, limit = 5) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.search", {
     artist: encodedArtist,
@@ -231,7 +231,7 @@ const searchArtist = async (artistName, limit = 10) => {
   }));
 };
 
-const getSimilarArtists = async (artistName, limit = 20) => {
+const getSimilarArtists = async (artistName, limit = 5) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.getSimilar", {
     artist: encodedArtist,
@@ -249,7 +249,7 @@ const getSimilarArtists = async (artistName, limit = 20) => {
   }));
 };
 
-const getArtistTopTags = async (artistName, limit = 10) => {
+const getArtistTopTags = async (artistName, limit = 5) => {
   const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.gettoptags", {
     artist: encodedArtist,
@@ -319,7 +319,7 @@ const getTopTags = async (tagName, limit = 20) => {
   }));
 };
 
-const getSimilarTags = async (tagName, limit = 20) => {
+const getSimilarTags = async (tagName, limit = 10) => {
   const encodedTagName = encodeURIComponent(tagName);
   const data = await fetchFromLastFm("tag.getSimilar", {
     tag: encodedTagName,
@@ -336,7 +336,7 @@ const getSimilarTags = async (tagName, limit = 20) => {
 };
 
 // ----- Chart Methods -----
-const getChartTopArtists = async (limit = 20) => {
+const getChartTopArtists = async (limit = 10) => {
   const data = await fetchFromLastFm("chart.gettopartists", {
     limit,
     page: 1,
@@ -352,7 +352,7 @@ const getChartTopArtists = async (limit = 20) => {
   }));
 };
 
-const getChartTopTracks = async (limit = 20) => {
+const getChartTopTracks = async (limit = 10) => {
   const data = await fetchFromLastFm("chart.gettoptracks", {
     limit,
     page: 1,
@@ -369,7 +369,7 @@ const getChartTopTracks = async (limit = 20) => {
   }));
 };
 
-const getChartTopTags = async (limit = 20) => {
+const getChartTopTags = async (limit = 10) => {
   const data = await fetchFromLastFm("chart.gettoptags", {
     limit,
     page: 1,
@@ -384,7 +384,7 @@ const getChartTopTags = async (limit = 20) => {
   }));
 };
 
-const getChartTopAlbums = async (limit = 20) => {
+const getChartTopAlbums = async (limit = 10) => {
   const data = await fetchFromLastFm("chart.gettopalbums", {
     limit,
     page: 1,
@@ -428,7 +428,7 @@ const getTrackInfo = async (artistName, trackName) => {
   };
 };
 
-const searchTrack = async (trackName, limit = 20) => {
+const searchTrack = async (trackName, limit = 10) => {
   const encodedTrack = encodeURIComponent(trackName);
   const data = await fetchFromLastFm("track.search", {
     track: encodedTrack,
@@ -447,7 +447,7 @@ const searchTrack = async (trackName, limit = 20) => {
   }));
 };
 
-const getTrackTopTags = async (artistName, trackName, limit = 10) => {
+const getTrackTopTags = async (artistName, trackName, limit = 5) => {
   const encodedArtist = encodeURIComponent(artistName);
   const encodedTrack = encodeURIComponent(trackName);
   const data = await fetchFromLastFm("track.gettoptags", {
