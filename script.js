@@ -540,13 +540,16 @@ const performSearch = async (query, type) => {
   return { results, type };
 };
 
-searchBtn.addEventListener("click", async () => {
+searchBtn.replaceWith(searchBtn.cloneNode(true));
+const newSearchBtn = document.getElementById("search-btn");
+
+newSearchBtn.addEventListener("click", async () => {
   const query = searchInput.value.trim();
   const type = searchType.value;
   if (!query) return;
 
   const { results, type: searchTypeUsed } = await performSearch(query, type);
-  displaySearchResults(results, searchTypeUsed);
+  displayEnhancedSearchResults(results, searchTypeUsed);
 });
 
 
@@ -600,4 +603,252 @@ const main = async () => {
   console.log(trackResults);
   const trackTags = await getTrackTopTags("Kanye West", "Stronger");
   console.log(trackTags);
+};
+
+// ----- ENHANCED SEARCH RESULTS DISPLAY -----
+const displayEnhancedSearchResults = (results, type) => {
+  resultsContainer.innerHTML = "";
+  setHidden(resultsContainer, false);
+
+  // Hide all main sections
+  setHidden(document.getElementById("artist-section"), true);
+  setHidden(document.getElementById("album-section"), true);
+  setHidden(document.getElementById("track-section"), true);
+  setHidden(document.getElementById("user-section"), true);
+  setHidden(document.getElementById("home-section"), true);
+
+  if (!results || results.length === 0) {
+    resultsContainer.innerHTML = "<p class='no-results'>No results found.</p>";
+    return;
+  }
+
+  // Create results header
+  const header = document.createElement("div");
+  header.classList.add("results-header");
+  header.innerHTML = `
+    <h2>Search Results for "${searchInput.value}"</h2>
+    <p class="results-count">${results.length} ${type}${results.length !== 1 ? 's' : ''} found</p>
+  `;
+  resultsContainer.appendChild(header);
+
+  const list = document.createElement("ul");
+  list.classList.add("enhanced-results-list");
+
+  // Helper function to get best image
+  const getBestImage = (images) => {
+    if (!images || images.length === 0) return null;
+    
+    const sizes = ["extralarge", "large", "medium", "small"];
+    for (const size of sizes) {
+      const image = images.find(img => img.size === size);
+      if (image && image["#text"]) return image["#text"];
+    }
+    return images[0]?.["#text"] || null;
+  };
+
+  results.forEach((item) => {
+    const li = document.createElement("li");
+    li.classList.add("enhanced-result-item");
+
+    const decodedName = decodeURIComponent(item.name || item.artist || "");
+    const decodedArtist = decodeURIComponent(item.artist || item.artist?.name || "");
+    const imageUrl = getBestImage(item.images) || 'https://via.placeholder.com/150x150?text=No+Image';
+
+    li.innerHTML = `
+      <div class="enhanced-result-content">
+        <img src="${imageUrl}" alt="${decodedName}" class="enhanced-result-image" 
+             onerror="this.src='https://via.placeholder.com/150x150?text=No+Image'">
+        <div class="enhanced-result-details">
+          <h3 class="enhanced-result-title">${decodedName}</h3>
+          ${type !== 'artist' ? `<p class="enhanced-result-artist">${decodedArtist}</p>` : ''}
+          <div class="enhanced-result-meta">
+            ${item.playcount ? `<span class="meta-item">🎵 ${item.playcount.toLocaleString()} plays</span>` : ''}
+            ${item.listeners ? `<span class="meta-item">👥 ${item.listeners.toLocaleString()} listeners</span>` : ''}
+            ${item.releaseDate ? `<span class="meta-item">📅 ${item.releaseDate}</span>` : ''}
+          </div>
+        </div>
+        <div class="enhanced-result-action">
+          <button class="view-details-btn" data-type="${type}" data-name="${decodedName}" data-artist="${decodedArtist}">
+            View Details
+          </button>
+        </div>
+      </div>
+    `;
+
+    list.appendChild(li);
+  });
+
+  resultsContainer.appendChild(list);
+
+  // Add event listeners to view details buttons
+  document.querySelectorAll('.view-details-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const type = btn.dataset.type;
+      const name = btn.dataset.name;
+      const artist = btn.dataset.artist;
+
+      await showEnhancedDetails(type, name, artist);
+    });
+  });
+
+  // Also make the entire result item clickable
+  document.querySelectorAll('.enhanced-result-item').forEach(item => {
+    item.addEventListener('click', async (e) => {
+      if (!e.target.closest('.view-details-btn')) {
+        const btn = item.querySelector('.view-details-btn');
+        const type = btn.dataset.type;
+        const name = btn.dataset.name;
+        const artist = btn.dataset.artist;
+
+        await showEnhancedDetails(type, name, artist);
+      }
+    });
+  });
+};
+
+// ----- ENHANCED DETAILS DISPLAY -----
+const showEnhancedDetails = async (type, name, artist) => {
+  // Hide search results and other sections
+  setHidden(resultsContainer, true);
+  setHidden(document.getElementById("home-section"), true);
+  setHidden(document.getElementById("user-section"), true);
+
+  let section, content;
+
+  const getBestImage = (images) => {
+    if (!images || images.length === 0) return null;
+    const sizes = ["extralarge", "large", "medium", "small"];
+    for (const size of sizes) {
+      const image = images.find(img => img.size === size);
+      if (image && image["#text"]) return image["#text"];
+    }
+    return images[0]?.["#text"] || null;
+  };
+
+  if (type === "artist") {
+    section = document.getElementById("artist-section");
+    const info = await getArtistInfo(name);
+    const imageUrl = getBestImage(info.images) || 'https://via.placeholder.com/300x300?text=No+Image';
+    
+    content = `
+      <div class="enhanced-artist-header">
+        <img class="enhanced-artist-image" src="${imageUrl}" alt="${info.artist}">
+        <div class="enhanced-artist-info">
+          <h2 class="enhanced-artist-name">${info.artist}</h2>
+          <div class="enhanced-artist-stats">
+            <div class="stat">
+              <span class="stat-number">${info.listeners.toLocaleString()}</span>
+              <span class="stat-label">Listeners</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">${info.playcount.toLocaleString()}</span>
+              <span class="stat-label">Plays</span>
+            </div>
+          </div>
+          ${info.tags.length > 0 ? `
+            <div class="enhanced-tags">
+              ${info.tags.slice(0, 5).map(tag => `<span class="enhanced-tag">${tag.name}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      <div class="enhanced-artist-bio">
+        <h3>About</h3>
+        <p>${info.bioSummary}</p>
+      </div>
+      <a href="${info.url}" target="_blank" class="enhanced-external-link">View on Last.fm</a>
+    `;
+
+  } else if (type === "album") {
+    section = document.getElementById("album-section");
+    const info = await getAlbumInfo(artist, name);
+    const imageUrl = getBestImage(info.images) || 'https://via.placeholder.com/300x300?text=No+Image';
+    
+    content = `
+      <div class="enhanced-album-header">
+        <img class="enhanced-album-image" src="${imageUrl}" alt="${info.name}">
+        <div class="enhanced-album-info">
+          <h2 class="enhanced-album-name">${info.name}</h2>
+          <p class="enhanced-album-artist">by ${info.artist}</p>
+          <div class="enhanced-album-stats">
+            <div class="stat">
+              <span class="stat-number">${info.playcount.toLocaleString()}</span>
+              <span class="stat-label">Plays</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">${info.tracks.length}</span>
+              <span class="stat-label">Tracks</span>
+            </div>
+          </div>
+          ${info.tags.length > 0 ? `
+            <div class="enhanced-tags">
+              ${info.tags.slice(0, 5).map(tag => `<span class="enhanced-tag">${tag.name}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      <div class="enhanced-album-details">
+        <div class="detail-item">
+          <strong>Release Date:</strong> ${info.releaseDate}
+        </div>
+        <div class="enhanced-album-description">
+          <h3>About this album</h3>
+          <p>${info.wikiSummary}</p>
+        </div>
+        ${info.tracks.length > 0 ? `
+          <div class="enhanced-tracklist">
+            <h3>Tracklist</h3>
+            <ol class="enhanced-tracks">
+              ${info.tracks.map(track => `<li>${track.name}</li>`).join('')}
+            </ol>
+          </div>
+        ` : ''}
+      </div>
+      <a href="${info.url}" target="_blank" class="enhanced-external-link">View on Last.fm</a>
+    `;
+
+  } else if (type === "track") {
+    section = document.getElementById("track-section");
+    const info = await getTrackInfo(artist, name);
+    const imageUrl = getBestImage(info.images) || 'https://via.placeholder.com/300x300?text=No+Image';
+    
+    content = `
+      <div class="enhanced-track-header">
+        <img class="enhanced-track-image" src="${imageUrl}" alt="${info.name}">
+        <div class="enhanced-track-info">
+          <h2 class="enhanced-track-name">${info.name}</h2>
+          <p class="enhanced-track-artist">by ${info.artist}</p>
+          <p class="enhanced-track-album">from ${info.album}</p>
+          <div class="enhanced-track-stats">
+            <div class="stat">
+              <span class="stat-number">${info.listeners.toLocaleString()}</span>
+              <span class="stat-label">Listeners</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">${info.playcount.toLocaleString()}</span>
+              <span class="stat-label">Plays</span>
+            </div>
+            ${info.duration ? `
+              <div class="stat">
+                <span class="stat-number">${Math.floor(info.duration / 60000)}:${((info.duration % 60000) / 1000).toFixed(0).padStart(2, '0')}</span>
+                <span class="stat-label">Duration</span>
+              </div>
+            ` : ''}
+          </div>
+          ${info.tags.length > 0 ? `
+            <div class="enhanced-tags">
+              ${info.tags.slice(0, 5).map(tag => `<span class="enhanced-tag">${tag.name}</span>`).join('')}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+      <a href="${info.url}" target="_blank" class="enhanced-external-link">View on Last.fm</a>
+    `;
+  }
+
+  if (section) {
+    section.innerHTML = content;
+    setHidden(section, false);
+  }
 };

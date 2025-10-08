@@ -11,23 +11,29 @@
 
   <body>
     <header>
-      <h1 id="site-logo">🎵 Good Vibrations</h1>
-      <nav>
-        <button data-view="home">Home</button>
-        <button data-view="profile">Profile</button>
-      </nav>
+      <div class="header-left">
+        <h1 id="site-logo">🎵 Good Vibrations</h1>
+      </div>
+      
+      <div class="header-center">
+        <!-- SEARCH FIELD ALWAYS VISIBLE -->
+        <div class="global-search">
+          <label for="search-input" class="sr-only">Search</label>
+          <input type="text" id="search-input" placeholder="Search artists, albums, or tracks..." />
+          <select id="search-type">
+            <option value="artist">Artist</option>
+            <option value="album">Album</option>
+            <option value="track">Song</option>
+          </select>
+          <button id="search-btn">Search</button>
+          <div role="listbox" id="results-container"></div>
+        </div>
+      </div>
 
-      <!-- SEARCH FIELD ALWAYS VISIBLE -->
-      <div class="global-search">
-        <label for="search-input" class="sr-only">Search</label>
-        <input type="text" id="search-input" placeholder="Search..." />
-        <select id="search-type">
-          <option value="artist">Artist</option>
-          <option value="album">Album</option>
-          <option value="track">Song</option>
-        </select>
-        <button id="search-btn">Search</button>
-        <div role="listbox" id="results-container"></div>
+      <div class="header-right">
+        <nav>
+          <button data-view="home">Home</button>
+        </nav>
       </div>
     </header>
 
