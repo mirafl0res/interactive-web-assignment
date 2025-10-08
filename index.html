@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Good Vibrations</title>
     <link rel="stylesheet" href="style.css" />
-  <script src="config.js"></script>
-  <script src="script.js" defer></script>
+    <script src="config.js"></script>
+    <script src="script.js" defer></script>
   </head>
 
   <body>
@@ -18,22 +18,21 @@
       </nav>
 
       <!-- SEARCH FIELD ALWAYS VISIBLE -->
-<div class="global-search">
-  <label for="search-input" class="sr-only">Search</label>
-  <input type="text" id="search-input" placeholder="Search..." />
-  <select id="search-type">
-    <option value="artist">Artist</option>
-    <option value="album">Album</option>
-    <option value="track">Song</option>
-  </select>
-  <button id="search-btn">Search</button>
-  <div role="listbox" id="results-container"></div>
-
-</div>
+      <div class="global-search">
+        <label for="search-input" class="sr-only">Search</label>
+        <input type="text" id="search-input" placeholder="Search..." />
+        <select id="search-type">
+          <option value="artist">Artist</option>
+          <option value="album">Album</option>
+          <option value="track">Song</option>
+        </select>
+        <button id="search-btn">Search</button>
+        <div role="listbox" id="results-container"></div>
+      </div>
     </header>
 
     <!-- HOME PAGE -->
-    <section class="page home-page">
+    <section id="home-section" class="hidden">
       <h2>Discover Music</h2>
 
       <div class="home-content">
@@ -61,47 +60,16 @@
     </section>
 
     <!-- ARTIST PAGE -->
-    <section class="page artist-page">
-      <div class="artist-header">
-        <img class="artist-image" src="" alt="Artist Image" />
-        <h2 class="artist-name">Artist Name</h2>
-        <ul class="artist-tags">
-          <li>Artist tags here</li>
-        </ul>
-      </div>
-      <p class="artist-bio">Artist biography goes here.</p>
-      <h3>Top Albums</h3>
-      <ul class="artist-top-albums">
-        <li>Top albums will show up here</li>
-      </ul>
-
-      <h3>Top Tracks</h3>
-      <ul class="artist-top-tracks">
-        <li>Top tracks will show up here</li>
-      </ul>
-    </section>
+    <section id="artist-section" class="hidden"></section>
 
     <!-- ALBUM PAGE -->
-    <section class="page album-page">
-      <div class="album-header">
-        <img class="album-image" src="" alt="Album Cover" />
-        <h2 class="album-name">Album Name</h2>
-        <p class="album-artist">By Artist</p>
-        <ul class="album-tags">
-          <li>Album tags here</li>
-        </ul>
-      </div>
+    <section id="album-section" class="hidden"></section>
 
-      <p class="album-summary">Album info here...</p>
-
-      <h3>Track List</h3>
-      <ul class="album-tracks">
-        <li>Album tracks will show up here</li>
-      </ul>
-    </section>
+    <!-- TRACK PAGE -->
+    <section id="track-section" class="hidden"></section>
 
     <!-- USER PROFILE -->
-    <section class="page profile-page">
+    <section id="user-section" class="hidden">
       <h2>Your Profile</h2>
       <p>Liked/rated artists, albums and tracks will show up here.</p>
       <ul class="profile-artists">

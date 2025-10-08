@@ -7,32 +7,6 @@ const headers = {
     "Good Vibrations/1.0 (https://github.com/mirafl0res/interactive-web-assignment.git)",
 };
 
-/*
-const METHODS = {
-  album: ["getInfo", "search", "getTopTags"],
-  artist: [
-    "getInfo",
-    "getSimilar",
-    "getTopAlbums",
-    "getTopTracks",
-    "search",
-    "getTopTags",
-  ],
-  chart: ["getTopArtists", "getTopTracks", "getTopTags"],
-  geo: ["getTopArtists", "getTopTracks"],
-  tag: [
-    "getInfo",
-    "getSimilar",
-    "getTopAlbums",
-    "getTopArtists",
-    "getTopTags",
-    "getTopTracks",
-    "getWeeklyChartList",
-  ],
-  track: ["getInfo", "getSimilar", "getTopTags", "search"],
-};
-*/
-
 // ----- 2. GENERIC HELP FETCHERS -----
 const fetchFromLastFm = async (method, params = {}) => {
   const queryParams = new URLSearchParams({
@@ -90,12 +64,9 @@ const fetchFromMusicBrainz = async (endpoint, params = {}) => {
 
 // ----- Album Methods -----
 const getAlbumInfo = async (artistName, albumName) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const encodedAlbum = encodeURIComponent(albumName);
-
   const data = await fetchFromLastFm("album.getinfo", {
-    artist: encodedArtist,
-    album: encodedAlbum,
+    artist: artistName,
+    album: albumName,
   });
 
   const album = data?.album || {};
@@ -115,9 +86,8 @@ const getAlbumInfo = async (artistName, albumName) => {
 };
 
 const searchAlbum = async (albumName, limit = 5) => {
-  const encodedAlbum = encodeURIComponent(albumName);
   const data = await fetchFromLastFm("album.search", {
-    album: encodedAlbum,
+    album: albumName,
     limit,
     page: 1,
   });
@@ -134,11 +104,9 @@ const searchAlbum = async (albumName, limit = 5) => {
 };
 
 const getAlbumTopTags = async (artistName, albumName, limit = 5) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const encodedAlbum = encodeURIComponent(albumName);
   const data = await fetchFromLastFm("album.gettoptags", {
-    artist: encodedArtist,
-    album: encodedAlbum,
+    artist: artistName,
+    album: albumName,
     limit,
     page: 1,
   });
@@ -153,9 +121,8 @@ const getAlbumTopTags = async (artistName, albumName, limit = 5) => {
 
 // ----- Artist Methods ------
 const getArtistInfo = async (artistName) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.getinfo", {
-    artist: encodedArtist,
+    artist: artistName,
   });
 
   const artist = data?.artist || {};
@@ -174,9 +141,8 @@ const getArtistInfo = async (artistName) => {
 };
 
 const getArtistTopAlbums = async (artistName, limit = 20) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.getTopAlbums", {
-    artist: encodedArtist,
+    artist: artistName,
     limit,
     page: 1,
   });
@@ -195,9 +161,8 @@ const getArtistTopAlbums = async (artistName, limit = 20) => {
 };
 
 const getArtistTopTracks = async (artistName, limit = 10) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.gettoptracks", {
-    artist: encodedArtist,
+    artist: artistName,
     limit,
     page: 1,
   });
@@ -214,9 +179,8 @@ const getArtistTopTracks = async (artistName, limit = 10) => {
 };
 
 const searchArtist = async (artistName, limit = 5) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.search", {
-    artist: encodedArtist,
+    artist: artistName,
     limit,
     page: 1,
   });
@@ -224,17 +188,16 @@ const searchArtist = async (artistName, limit = 5) => {
   const artists = data?.results?.artistmatches?.artist || [];
 
   return artists.map((artist) => ({
-    artist: artist.name,
+    artist: artist.name || "Unknown Artist",
     mbid: artist.mbid || "Not available",
-    url: artist.url,
+    url: artist.url || "#",
     images: artist.image || [],
   }));
 };
 
 const getSimilarArtists = async (artistName, limit = 5) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.getSimilar", {
-    artist: encodedArtist,
+    artist: artistName,
     limit,
     page: 1,
   });
@@ -243,16 +206,15 @@ const getSimilarArtists = async (artistName, limit = 5) => {
 
   return artists.map((artist) => ({
     artist: artist.name || "Unknown Artist",
-    mbid: artist.mbid,
+    mbid: artist.mbid || "Not available",
     url: artist.url || "#",
     images: artist.image || [],
   }));
 };
 
 const getArtistTopTags = async (artistName, limit = 5) => {
-  const encodedArtist = encodeURIComponent(artistName);
   const data = await fetchFromLastFm("artist.gettoptags", {
-    artist: encodedArtist,
+    artist: artistName,
     limit,
     page: 1,
   });
@@ -260,16 +222,15 @@ const getArtistTopTags = async (artistName, limit = 5) => {
   const topTags = data?.toptags?.tag || [];
 
   return topTags.map((tag) => ({
-    name: tag.name,
-    url: tag.url,
+    name: tag.name || "Unknown Tag",
+    url: tag.url || "#",
   }));
 };
 
 // ----- Tag Methods -----
 const getTagTopArtists = async (tagName, limit = 20) => {
-  const encodedTagName = encodeURIComponent(tagName);
   const data = await fetchFromLastFm("tag.gettopartists", {
-    tag: encodedTagName,
+    tag: tagName,
     limit,
     page: 1,
   });
@@ -285,9 +246,8 @@ const getTagTopArtists = async (tagName, limit = 20) => {
 };
 
 const getTagTopAlbums = async (tagName, limit = 20) => {
-  const encodedTagName = encodeURIComponent(tagName);
   const data = await fetchFromLastFm("tag.getTopAlbums", {
-    tag: encodedTagName,
+    tag: tagName,
     limit,
     page: 1,
   });
@@ -304,9 +264,8 @@ const getTagTopAlbums = async (tagName, limit = 20) => {
 };
 
 const getTopTags = async (tagName, limit = 20) => {
-  const encodedTagName = encodeURIComponent(tagName);
   const data = await fetchFromLastFm("tag.getTopTags", {
-    tag: encodedTagName,
+    tag: tagName,
     limit,
     page: 1,
   });
@@ -314,15 +273,14 @@ const getTopTags = async (tagName, limit = 20) => {
   const topTags = data?.toptags?.tag || [];
 
   return topTags.map((tag) => ({
-    name: tag.name,
-    tagCount: tag.count,
+    name: tag.name || "Unknown Tag",
+    tagCount: tag.count || 0,
   }));
 };
 
 const getSimilarTags = async (tagName, limit = 10) => {
-  const encodedTagName = encodeURIComponent(tagName);
   const data = await fetchFromLastFm("tag.getSimilar", {
-    tag: encodedTagName,
+    tag: tagName,
     limit,
     page: 1,
   });
@@ -330,8 +288,8 @@ const getSimilarTags = async (tagName, limit = 10) => {
   const similarTags = data?.similartags?.tag || [];
 
   return similarTags.map((tag) => ({
-    name: tag.name,
-    url: tag.url,
+    name: tag.name || "Unknown Tag",
+    url: tag.url || "#",
   }));
 };
 
@@ -345,7 +303,7 @@ const getChartTopArtists = async (limit = 10) => {
   const topArtists = data?.artists?.artist || [];
 
   return topArtists.map((artist) => ({
-    name: artist.name,
+    name: artist.name || "Unknown Artist",
     mbid: artist.mbid || "Not available",
     url: artist.url || "#",
     artistRank: artist["@attr"]?.rank || 0,
@@ -378,8 +336,8 @@ const getChartTopTags = async (limit = 10) => {
   const topTags = data?.tags?.tag || [];
 
   return topTags.map((tag) => ({
-    name: tag.name,
-    url: tag.url,
+    name: tag.name || "Unknown Tag",
+    url: tag.url || "#",
     tagCount: tag.count || 0,
   }));
 };
@@ -404,12 +362,9 @@ const getChartTopAlbums = async (limit = 10) => {
 
 // ----- Track Methods -----
 const getTrackInfo = async (artistName, trackName) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const encodedTrack = encodeURIComponent(trackName);
-
   const data = await fetchFromLastFm("track.getinfo", {
-    artist: encodedArtist,
-    track: encodedTrack,
+    artist: artistName,
+    track: trackName,
   });
 
   const track = data?.track || {};
@@ -429,9 +384,8 @@ const getTrackInfo = async (artistName, trackName) => {
 };
 
 const searchTrack = async (trackName, limit = 10) => {
-  const encodedTrack = encodeURIComponent(trackName);
   const data = await fetchFromLastFm("track.search", {
-    track: encodedTrack,
+    track: trackName,
     limit,
     page: 1,
   });
@@ -439,20 +393,18 @@ const searchTrack = async (trackName, limit = 10) => {
   const tracks = data?.results?.trackmatches?.track || [];
 
   return tracks.map((track) => ({
-    name: track.name,
-    artist: track.artist,
+    name: track.name || "Unknown Track",
+    artist: track.artist || "Unknown Artist",
     mbid: track.mbid || "Not available",
-    url: track.url,
+    url: track.url || "#",
     images: track.image || [],
   }));
 };
 
 const getTrackTopTags = async (artistName, trackName, limit = 5) => {
-  const encodedArtist = encodeURIComponent(artistName);
-  const encodedTrack = encodeURIComponent(trackName);
   const data = await fetchFromLastFm("track.gettoptags", {
-    artist: encodedArtist,
-    track: encodedTrack,
+    artist: artistName,
+    track: trackName,
     limit,
     page: 1,
   });
@@ -466,6 +418,138 @@ const getTrackTopTags = async (artistName, trackName, limit = 5) => {
 };
 
 // ----- 5. APP LOGIC -----
+
+// --------------------------------
+// UI: Home, Search, Results, Pages
+// --------------------------------
+
+const searchBtn = document.getElementById("search-btn");
+const searchInput = document.getElementById("search-input");
+const searchType = document.getElementById("search-type");
+const resultsContainer = document.getElementById("results-container");
+
+const setHidden = (element, hidden = true) => {
+  if (!element) return;
+  element.classList.toggle("hidden", hidden);
+  element.setAttribute("aria-hidden", hidden ? "true" : "false");
+};
+
+setHidden(resultsContainer, true);
+
+const displaySearchResults = (results, type) => {
+  resultsContainer.innerHTML = "";
+  setHidden(resultsContainer, false);
+
+
+  setHidden(document.getElementById("artist-section"), true);
+  setHidden(document.getElementById("album-section"), true);
+  setHidden(document.getElementById("track-section"), true);
+
+  if (!results || results.length === 0) {
+    resultsContainer.innerHTML = "<p>No results found.</p>";
+    return;
+  }
+
+  const list = document.createElement("ul");
+  list.classList.add("results-list");
+
+  results.forEach((item) => {
+    const li = document.createElement("li");
+    li.classList.add("result-item");
+
+    const decodedName = decodeURIComponent(item.name || item.artist || "");
+    const decodedArtist = decodeURIComponent(
+      item.artist || item.artist?.name || ""
+    );
+
+    if (type === "artist") {
+      li.textContent = decodedName;
+    } else if (type === "album") {
+      li.textContent = `${decodedName} — ${decodedArtist}`;
+    } else if (type === "track") {
+      li.textContent = `${decodedName} — ${decodedArtist}`;
+    }
+
+    li.addEventListener("click", async () => {
+      // Hide all sections
+      setHidden(document.getElementById("artist-section"), true);
+      setHidden(document.getElementById("album-section"), true);
+      setHidden(document.getElementById("track-section"), true);
+      setHidden(document.getElementById("user-section"), true);
+
+      if (type === "artist") {
+        const info = await getArtistInfo(item.artist);
+        console.log(info);
+        const section = document.getElementById("artist-section");
+        if (section) {
+          section.innerHTML = `
+            <h2>${info.artist}</h2>
+            <p><strong>Listeners:</strong> ${info.listeners}</p>
+            <p><strong>Playcount:</strong> ${info.playcount}</p>
+            <div>${info.bioSummary}</div>
+            <a href="${info.url}" target="_blank">View on Last.fm</a>
+          `;
+          setHidden(section, false);
+        }
+      } else if (type === "album") {
+        const info = await getAlbumInfo(item.artist, item.name);
+        const section = document.getElementById("album-section");
+        if (section) {
+          section.innerHTML = `
+            <h2>${info.name}</h2>
+            <p><strong>Artist:</strong> ${info.artist}</p>
+            <p><strong>Playcount:</strong> ${info.playcount}</p>
+            <p><strong>Release Date:</strong> ${info.releaseDate}</p>
+            <div>${info.wikiSummary}</div>
+            <a href="${info.url}" target="_blank">View on Last.fm</a>
+          `;
+          setHidden(section, false);
+        }
+      } else if (type === "track") {
+        const info = await getTrackInfo(item.artist, item.name);
+        const section = document.getElementById("track-section");
+        if (section) {
+          section.innerHTML = `
+            <h2>${info.name}</h2>
+            <p><strong>Artist:</strong> ${info.artist}</p>
+            <p><strong>Album:</strong> ${info.album}</p>
+            <p><strong>Listeners:</strong> ${info.listeners}</p>
+            <p><strong>Playcount:</strong> ${info.playcount}</p>
+            <a href="${info.url}" target="_blank">View on Last.fm</a>
+          `;
+          setHidden(section, false);
+        }
+      }
+    });
+
+    list.appendChild(li);
+  });
+
+  resultsContainer.appendChild(list);
+};
+
+const performSearch = async (query, type) => {
+  let results = [];
+  if (type === "artist") {
+    results = await searchArtist(query);
+  } else if (type === "album") {
+    results = await searchAlbum(query);
+  } else if (type === "track") {
+    results = await searchTrack(query);
+  }
+  return { results, type };
+};
+
+searchBtn.addEventListener("click", async () => {
+  const query = searchInput.value.trim();
+  const type = searchType.value;
+  if (!query) return;
+
+  const { results, type: searchTypeUsed } = await performSearch(query, type);
+  displaySearchResults(results, searchTypeUsed);
+});
+
+
 
 // ====== TESTING ======
 const main = async () => {
@@ -517,78 +601,3 @@ const main = async () => {
   const trackTags = await getTrackTopTags("Kanye West", "Stronger");
   console.log(trackTags);
 };
-
-// --------------------------------
-// UI: Home, Search, Results, Pages
-// --------------------------------
-
-const searchBtn = document.getElementById("search-btn");
-const searchInput = document.getElementById("search-input");
-const searchType = document.getElementById("search-type");
-const resultsContainer = document.getElementById("results-container");
-
-// Utility: explicit hide/show with ARIA sync
-const setHidden = (element, hidden = true) => {
-  if (!element) return;
-  element.classList.toggle("hidden", hidden);
-  element.setAttribute("aria-hidden", hidden ? "true" : "false");
-};
-
-setHidden(resultsContainer, true);
-
-const displaySearchResults = (results, type) => {
-  resultsContainer.innerHTML = "";
-
-  setHidden(resultsContainer, false);
-
-  if (!results || results.length === 0) {
-    resultsContainer.innerHTML = "<p>No results found.</p>";
-    return;
-  }
-
-  const list = document.createElement("ul");
-  list.classList.add("results-list");
-
-  results.forEach((item) => {
-    const li = document.createElement("li");
-    li.classList.add("result-item");
-
-    const decodedName = decodeURIComponent(item.name || "");
-    const decodedArtist = decodeURIComponent(item.artist || item.artist?.name || "");
-
-    if (type === "artist") {
-      li.textContent = decodedName || item.artist || item.name;
-    } else if (type === "album") {
-      li.textContent = `${decodedName} — ${decodedArtist}`;
-    } else if (type === "track") {
-      li.textContent = `${decodedName} — ${decodedArtist}`;
-    }
-
-    list.appendChild(li);
-  });
-
-  resultsContainer.appendChild(list);
-};
-
-const performSearch = async (query, type) => {
-  let results = [];
-  if (type === "artist") {
-    results = await searchArtist(query);
-  } else if (type === "album") {
-    results = await searchAlbum(query);
-  } else if (type === "track") {
-    results = await searchTrack(query);
-  }
-
-  console.log(results);
-  return { results, type };
-};
-
-searchBtn.addEventListener("click", async () => {
-  const query = searchInput.value.trim();
-  const type = searchType.value;
-  if (!query) return;
-
-  const { results, type: searchTypeUsed } = await performSearch(query, type);
-  displaySearchResults(results, searchTypeUsed);
-});

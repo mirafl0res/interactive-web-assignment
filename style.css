@@ -2,14 +2,3 @@
 .hidden {
 	display: none !important;
 }
-
-/* Small defaults for search results */
-.result-item {
-	padding: 8px 10px;
-	border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-
-.result-item h3 {
-	margin: 0;
-	font-size: 14px;
-}
