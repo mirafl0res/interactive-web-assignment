@@ -64,6 +64,7 @@ header {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  white-space: nowrap;
 }
 
 nav {
@@ -91,9 +92,10 @@ nav button:hover {
 /* Global Search */
 .global-search {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  flex-wrap: wrap;
+  width: 100%;
+  position: relative;
 }
 
 #search-input {
@@ -520,11 +522,31 @@ nav button:hover {
   }
   
   header {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  margin-bottom: 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: nowrap;
+  gap: 30px;
   }
   
+  .header-left {
+  flex-shrink: 0;
+}
+
+.header-center {
+  flex: 1;
+  max-width: 600px;
+  min-width: 400px;
+}
+
+.header-right {
+  flex-shrink: 0;
+}
+
+
   .global-search {
     width: 100%;
     justify-content: center;
@@ -628,6 +650,7 @@ nav button:hover {
   }
 }
 
+<<<<<<< HEAD
 /* Search Type Dropdown */
 #search-type {
   padding: 14px 16px;
@@ -1112,24 +1135,73 @@ nav button:hover {
 
 /* Result Item Content */
 .result-item-content {
+=======
+
+#search-type {
+  border-radius: 5px;
+  color: #0dd33f;
+  background-color: #0b0f12;
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* Search Results Styling */
+.results-list {
+  list-style: none;
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.result-item {
+  background: var(--glass);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--card-radius);
+  padding: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.result-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.result-content {
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
 .result-image {
+<<<<<<< HEAD
   width: 50px;
   height: 50px;
+=======
+  width: 60px;
+  height: 60px;
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
   border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 .result-info {
+=======
+.result-details {
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
   flex: 1;
 }
 
 .result-title {
+<<<<<<< HEAD
+=======
+  font-size: 16px;
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
   font-weight: 600;
   margin-bottom: 5px;
   color: #fff;
@@ -1138,6 +1210,7 @@ nav button:hover {
 .result-artist {
   font-size: 14px;
   color: var(--muted);
+<<<<<<< HEAD
 }
 
 /* Responsive Design for New Elements */
@@ -1279,12 +1352,102 @@ nav button:hover {
 .chart-title {
   font-size: 1.4rem;
   font-weight: 700;
+=======
+  margin-bottom: 5px;
+}
+
+.result-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+/* Tags Styling */
+.artist-tags,
+.album-tags,
+.track-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag {
+  background: linear-gradient(135deg, var(--accent2), var(--accent1));
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* External Link Styling */
+.external-link {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  color: white;
+  text-decoration: none;
+  border-radius: var(--card-radius);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.external-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+/* Similar Artists */
+.similar-artists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.similar-artist {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Track Header */
+.track-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 30px;
+  background: var(--glass);
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.track-image {
+  width: 200px;
+  height: 200px;
+  border-radius: var(--card-radius);
+  object-fit: cover;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.track-name {
+  font-size: 28px;
+  margin-bottom: 10px;
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
   background: linear-gradient(135deg, #fff, var(--accent1));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+<<<<<<< HEAD
 /* Chart Items with Images */
 .chart-items {
   display: flex;
@@ -1490,3 +1653,384 @@ nav button:hover {
     gap: 8px;
   }
 }
+=======
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .result-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .result-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .artist-header,
+  .track-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+  
+  .artist-image,
+  .track-image {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Enhanced Search Results Styling */
+.results-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.results-header h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+  background: linear-gradient(135deg, #fff, var(--accent1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.results-count {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.enhanced-results-list {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.enhanced-result-item {
+  background: var(--glass);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--card-radius);
+  padding: 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.enhanced-result-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.enhanced-result-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.enhanced-result-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.enhanced-result-details {
+  flex: 1;
+}
+
+.enhanced-result-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.enhanced-result-artist {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.enhanced-result-meta {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.enhanced-result-action {
+  flex-shrink: 0;
+}
+
+.view-details-btn {
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+/* Enhanced Details Styling */
+.enhanced-artist-header,
+.enhanced-album-header,
+.enhanced-track-header {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  padding: 30px;
+  background: var(--glass);
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.enhanced-artist-image,
+.enhanced-album-image,
+.enhanced-track-image {
+  width: 200px;
+  height: 200px;
+  border-radius: var(--card-radius);
+  object-fit: cover;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.enhanced-artist-info,
+.enhanced-album-info,
+.enhanced-track-info {
+  flex: 1;
+}
+
+.enhanced-artist-name,
+.enhanced-album-name,
+.enhanced-track-name {
+  font-size: 32px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff, var(--accent1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.enhanced-album-artist,
+.enhanced-track-artist {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.enhanced-track-album {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+
+.enhanced-artist-stats,
+.enhanced-album-stats,
+.enhanced-track-stats {
+  display: flex;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent1);
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 5px;
+}
+
+.enhanced-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.enhanced-tag {
+  background: linear-gradient(135deg, var(--accent2), var(--accent1));
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.enhanced-artist-bio,
+.enhanced-album-description {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: var(--glass);
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.enhanced-artist-bio h3,
+.enhanced-album-description h3 {
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.enhanced-artist-bio p,
+.enhanced-album-description p {
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.enhanced-album-details {
+  margin-bottom: 25px;
+}
+
+.detail-item {
+  margin-bottom: 10px;
+  padding: 15px;
+  background: var(--glass);
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.enhanced-tracklist {
+  margin-top: 25px;
+}
+
+.enhanced-tracklist h3 {
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.enhanced-tracks {
+  list-style: decimal;
+  padding-left: 20px;
+  background: var(--glass);
+  border-radius: var(--card-radius);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 20px 20px 20px 40px;
+}
+
+.enhanced-tracks li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+.enhanced-tracks li:last-child {
+  border-bottom: none;
+}
+
+.enhanced-external-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  color: white;
+  text-decoration: none;
+  border-radius: var(--card-radius);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.enhanced-external-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .enhanced-result-content {
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    display: flex;
+    gap: 12px;
+  }
+  
+  .enhanced-result-image {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .enhanced-result-meta {
+    justify-content: center;
+  }
+  
+  .enhanced-artist-header,
+  .enhanced-album-header,
+  .enhanced-track-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .enhanced-artist-image,
+  .enhanced-album-image,
+  .enhanced-track-image {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+  
+  .enhanced-artist-stats,
+  .enhanced-album-stats,
+  .enhanced-track-stats {
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .enhanced-tracks {
+    padding: 15px 15px 15px 30px;
+  }
+}
+
+#results-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--card-radius);
+  margin-top: 8px;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  max-height: 400px;
+  overflow-y: auto;
+}
+>>>>>>> 23e3e03 (Fixed Searching, added details to song, artist and Album.)
