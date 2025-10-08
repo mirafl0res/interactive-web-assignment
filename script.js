@@ -588,6 +588,8 @@ const performSearch = async (query, type) => {
 searchBtn.addEventListener("click", async () => {
   const query = searchInput.value.trim();
   const type = searchType.value;
+  searchInput.value = "";
+
   if (!query) return;
 
   const { results, type: searchTypeUsed } = await performSearch(query, type);
@@ -725,6 +727,22 @@ document.querySelectorAll(".home-buttons button").forEach((btn) => {
     }
 
     renderHomeChart(items, chartType);
+  });
+});
+
+const homeButton = document.getElementById("home-btn");
+const siteLogo = document.getElementById("site-logo");
+[homeButton, siteLogo].forEach((el) => {
+  el.style.cursor = "pointer";
+  el.addEventListener("click", () => {
+    searchInput.value = "";
+    setHidden(document.getElementById("artist-section"), true);
+    setHidden(document.getElementById("album-section"), true);
+    setHidden(document.getElementById("track-section"), true);
+    setHidden(document.getElementById("tag-section"), true);
+    setHidden(document.getElementById("user-section"), true);
+    setHidden(resultsContainer, true);
+    setHidden(document.getElementById("home-section"), false);
   });
 });
 
