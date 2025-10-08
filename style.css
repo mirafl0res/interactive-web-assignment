@@ -3,14 +3,270 @@
 	display: none !important;
 }
 
+/* Basic reset and body styles */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	line-height: 1.6;
+	padding: 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+/* Header and navigation */
+header {
+	background: #f4f4f4;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 8px;
+}
+
+#site-logo {
+	margin-bottom: 15px;
+}
+
+nav {
+	margin-bottom: 15px;
+}
+
+nav button {
+	margin-right: 10px;
+	padding: 8px 16px;
+	cursor: pointer;
+	background: #007bff;
+	color: white;
+	border: none;
+	border-radius: 4px;
+}
+
+nav button:hover {
+	background: #0056b3;
+}
+
+/* Search section */
+.global-search {
+	position: relative;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	white-space: nowrap;
+	border: 0;
+}
+
+#search-input {
+	flex: 1;
+	padding: 8px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+#search-type {
+	padding: 8px 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+#search-btn {
+	padding: 8px 16px;
+	background: #28a745;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+#search-btn:hover {
+	background: #218838;
+}
+
+/* Search results dropdown */
+#results-container {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	background: white;
+	border: 1px solid #ccc;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	max-height: 400px;
+	overflow-y: auto;
+	z-index: 1000;
+	margin-top: 2px;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.results-list {
+	list-style: none;
+}
+
 /* Small defaults for search results */
 .result-item {
-	padding: 8px 10px;
+	padding: 12px;
 	border-bottom: 1px solid rgba(0,0,0,0.06);
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.result-item:hover {
+	background: #f8f9fa;
 }
 
 .result-item h3 {
-	margin: 0;
-	font-size: 14px;
+	margin: 0 0 4px 0;
+	font-size: 16px;
+	color: #333;
 }
 
+.result-item p {
+	margin: 0;
+	font-size: 14px;
+	color: #666;
+}
+
+/* Page sections */
+.page {
+	padding: 20px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.page h2 {
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.page h3 {
+	margin: 20px 0 10px 0;
+	color: #555;
+}
+
+.page ul {
+	list-style: none;
+	padding-left: 0;
+}
+
+.page ul li {
+	padding: 8px 0;
+	border-bottom: 1px solid #eee;
+}
+
+/* Artist page */
+.artist-header {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 20px;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.artist-image {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.artist-name {
+	font-size: 32px;
+	margin-bottom: 10px;
+}
+
+.artist-tags {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	list-style: none;
+	padding: 0;
+}
+
+.artist-tags li {
+	background: #e9ecef;
+	padding: 4px 12px;
+	border-radius: 16px;
+	font-size: 14px;
+	border: none;
+}
+
+.artist-bio {
+	margin: 20px 0;
+	line-height: 1.8;
+}
+
+.artist-top-albums li,
+.artist-top-tracks li {
+	cursor: pointer;
+}
+
+.artist-top-albums li:hover {
+	background: #f8f9fa;
+}
+
+/* Album page */
+.album-header {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 20px;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.album-image {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.album-name {
+	font-size: 32px;
+	margin-bottom: 10px;
+}
+
+.album-artist {
+	font-size: 18px;
+	color: #666;
+	margin-bottom: 10px;
+}
+
+.album-tags {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	list-style: none;
+	padding: 0;
+}
+
+.album-tags li {
+	background: #e9ecef;
+	padding: 4px 12px;
+	border-radius: 16px;
+	font-size: 14px;
+	border: none;
+}
+
+.album-summary {
+	margin: 20px 0;
+	line-height: 1.8;
+}
+
+/* Home page */
+.home-content h3 {
+	margin-top: 30px;
+}

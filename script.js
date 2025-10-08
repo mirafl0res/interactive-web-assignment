@@ -496,6 +496,7 @@ const resultsContainer = document.getElementById("results-container");
 const setHidden = (element, hidden = true) => {
   if (!element) return;
   element.classList.toggle("hidden", hidden);
+  // Update ARIA for all elements
   element.setAttribute("aria-hidden", hidden ? "true" : "false");
 };
 
@@ -517,50 +518,46 @@ const displaySearchResults = (results, type) => {
   results.forEach((item) => {
     const li = document.createElement("li");
     li.classList.add("result-item");
-  })
-  /*
-
-    // Create image element (if available)
-    const imageUrl =
-      item.images?.find((img) => img.size === "medium")?.["#text"] || "";
-
-    if (imageUrl) {
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      img.alt = item.name || "Image";
-      li.appendChild(img);
-    }
+    li.setAttribute("role", "option");
+    li.setAttribute("tabindex", "0");
 
     // Main text info
     const title = document.createElement("h3");
-    title.textContent = item.name || item.artist || "Unknown";
+    if (type === "artist") {
+      title.textContent = item.artist || "Unknown Artist";
+    } else {
+      title.textContent = item.name || "Unknown";
+    }
     li.appendChild(title);
 
     // Add extra info depending on search type
     if (type === "album" && item.artist) {
       const artist = document.createElement("p");
-      artist.textContent = `Artist: ${item.artist}`;
+      artist.textContent = `By ${item.artist}`;
       li.appendChild(artist);
     } else if (type === "track" && item.artist) {
       const artist = document.createElement("p");
-      artist.textContent = `Artist: ${item.artist}`;
+      artist.textContent = `By ${item.artist}`;
       li.appendChild(artist);
     }
 
-    // Optional link to Last.fm
-    if (item.url) {
-      const link = document.createElement("a");
-      link.href = item.url;
-      link.target = "_blank";
-      link.textContent = "View on Last.fm";
-      li.appendChild(link);
-    }
+    // Click handler to navigate to detail page
+    li.addEventListener("click", () => {
+      if (type === "artist") {
+        showArtistPage(item.artist);
+      } else if (type === "album") {
+        showAlbumPage(item.artist, item.name);
+      } else if (type === "track") {
+        // For tracks, we'll just show artist page for now
+        showArtistPage(item.artist);
+      }
+      setHidden(resultsContainer, true);
+    });
 
     list.appendChild(li);
   });
 
   resultsContainer.appendChild(list);
-  */
 };
 
 const performSearch = async (query, type) => {
@@ -588,3 +585,157 @@ searchBtn.addEventListener("click", () => {
     performSearch(query, "track");
   }
 });
+
+// --------------------------------
+// Page Navigation
+// --------------------------------
+
+const pages = {
+  home: document.querySelector(".home-page"),
+  artist: document.querySelector(".artist-page"),
+  album: document.querySelector(".album-page"),
+  profile: document.querySelector(".profile-page")
+};
+
+const showPage = (pageName) => {
+  Object.values(pages).forEach(page => {
+    if (page) setHidden(page, true);
+  });
+  if (pages[pageName]) {
+    setHidden(pages[pageName], false);
+  }
+};
+
+// --------------------------------
+// Artist Page
+// --------------------------------
+
+const showArtistPage = async (artistName) => {
+  showPage("artist");
+
+  // Fetch artist info
+  const artistInfo = await getArtistInfo(artistName);
+  const topAlbums = await getArtistTopAlbums(artistName, 10);
+  const topTracks = await getArtistTopTracks(artistName, 10);
+
+  // Update artist name
+  const nameEl = document.querySelector(".artist-name");
+  if (nameEl) nameEl.textContent = artistInfo.artist;
+
+  // Update artist image
+  const imageEl = document.querySelector(".artist-image");
+  const imageUrl = artistInfo.images?.find(img => img.size === "large")?.["#text"] || "";
+  if (imageEl && imageUrl) {
+    imageEl.src = imageUrl;
+    imageEl.alt = artistInfo.artist;
+  }
+
+  // Update artist bio
+  const bioEl = document.querySelector(".artist-bio");
+  if (bioEl) bioEl.innerHTML = artistInfo.bioSummary;
+
+  // Update artist tags
+  const tagsEl = document.querySelector(".artist-tags");
+  if (tagsEl) {
+    tagsEl.innerHTML = "";
+    artistInfo.tags.slice(0, 5).forEach(tag => {
+      const li = document.createElement("li");
+      li.textContent = tag.name;
+      tagsEl.appendChild(li);
+    });
+  }
+
+  // Update top albums
+  const albumsEl = document.querySelector(".artist-top-albums");
+  if (albumsEl) {
+    albumsEl.innerHTML = "";
+    topAlbums.forEach(album => {
+      const li = document.createElement("li");
+      li.textContent = album.name;
+      li.style.cursor = "pointer";
+      li.addEventListener("click", () => {
+        showAlbumPage(album.artist, album.name);
+      });
+      albumsEl.appendChild(li);
+    });
+  }
+
+  // Update top tracks
+  const tracksEl = document.querySelector(".artist-top-tracks");
+  if (tracksEl) {
+    tracksEl.innerHTML = "";
+    topTracks.forEach(track => {
+      const li = document.createElement("li");
+      li.textContent = track.name;
+      tracksEl.appendChild(li);
+    });
+  }
+};
+
+// --------------------------------
+// Album Page
+// --------------------------------
+
+const showAlbumPage = async (artistName, albumName) => {
+  showPage("album");
+
+  // Fetch album info
+  const albumInfo = await getAlbumInfo(artistName, albumName);
+
+  // Update album name
+  const nameEl = document.querySelector(".album-name");
+  if (nameEl) nameEl.textContent = albumInfo.name;
+
+  // Update album artist
+  const artistEl = document.querySelector(".album-artist");
+  if (artistEl) artistEl.textContent = `By ${albumInfo.artist}`;
+
+  // Update album image
+  const imageEl = document.querySelector(".album-image");
+  const imageUrl = albumInfo.images?.find(img => img.size === "large")?.["#text"] || "";
+  if (imageEl && imageUrl) {
+    imageEl.src = imageUrl;
+    imageEl.alt = albumInfo.name;
+  }
+
+  // Update album summary
+  const summaryEl = document.querySelector(".album-summary");
+  if (summaryEl) summaryEl.innerHTML = albumInfo.wikiSummary;
+
+  // Update album tags
+  const tagsEl = document.querySelector(".album-tags");
+  if (tagsEl) {
+    tagsEl.innerHTML = "";
+    albumInfo.tags.slice(0, 5).forEach(tag => {
+      const li = document.createElement("li");
+      li.textContent = tag.name;
+      tagsEl.appendChild(li);
+    });
+  }
+
+  // Update track list
+  const tracksEl = document.querySelector(".album-tracks");
+  if (tracksEl) {
+    tracksEl.innerHTML = "";
+    albumInfo.tracks.forEach(track => {
+      const li = document.createElement("li");
+      li.textContent = track.name;
+      tracksEl.appendChild(li);
+    });
+  }
+};
+
+// --------------------------------
+// Navigation buttons
+// --------------------------------
+
+const navButtons = document.querySelectorAll("nav button[data-view]");
+navButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const view = button.getAttribute("data-view");
+    showPage(view);
+  });
+});
+
+// Show home page by default
+showPage("home");
