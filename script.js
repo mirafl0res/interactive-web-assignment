@@ -572,7 +572,7 @@ const performSearch = async (query, type) => {
   displaySearchResults(results, type);
 };
 
-searchBtn.addEventListener("click", () => {
+const handleSearch = () => {
   const query = searchInput.value.trim();
   const type = searchType.value;
   if (!query) return;
@@ -583,6 +583,14 @@ searchBtn.addEventListener("click", () => {
     performSearch(query, "album");
   } else if (type === "track") {
     performSearch(query, "track");
+  }
+};
+
+searchBtn.addEventListener("click", handleSearch);
+
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    handleSearch();
   }
 });
 
@@ -739,3 +747,11 @@ navButtons.forEach(button => {
 
 // Show home page by default
 showPage("home");
+
+// Close results when clicking outside
+document.addEventListener("click", (e) => {
+  const searchContainer = document.querySelector(".global-search");
+  if (searchContainer && !searchContainer.contains(e.target)) {
+    setHidden(resultsContainer, true);
+  }
+});
