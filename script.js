@@ -481,6 +481,41 @@ const main = async () => {
   console.log(artistInfo);
   const tags = await getAlbumTopTags("Kanye West", "Graduation");
   console.log(tags);
+
+  const topAlbums = await getArtistTopAlbums("Kanye West");
+  console.log(topAlbums);
+  const topTracks = await getArtistTopTracks("Kanye West");
+  console.log(topTracks);
+
+  const similarArtists = await getSimilarArtists("Kanye West");
+  console.log(similarArtists);
+  const artistTags = await getArtistTopTags("Kanye West");
+  console.log(artistTags);
+
+  const tagArtists = await getTagTopArtists("rock");
+  console.log(tagArtists);
+  const tagAlbums = await getTagTopAlbums("rock");
+  console.log(tagAlbums);
+  const topTags = await getTopTags("rock");
+  console.log(topTags);
+  const similarTags = await getSimilarTags("rock");
+  console.log(similarTags);
+
+  const chartArtists = await getChartTopArtists();
+  console.log(chartArtists);
+  const chartTracks = await getChartTopTracks();
+  console.log(chartTracks);
+  const chartTags = await getChartTopTags();
+  console.log(chartTags);
+  const chartAlbums = await getChartTopAlbums();
+  console.log(chartAlbums);
+
+  const trackInfo = await getTrackInfo("Kanye West", "Stronger");
+  console.log(trackInfo);
+  const trackResults = await searchTrack("Stronger");
+  console.log(trackResults);
+  const trackTags = await getTrackTopTags("Kanye West", "Stronger");
+  console.log(trackTags);
 };
 
 // --------------------------------
@@ -503,7 +538,7 @@ setHidden(resultsContainer, true);
 
 const displaySearchResults = (results, type) => {
   resultsContainer.innerHTML = "";
-
+  
   setHidden(resultsContainer, false);
 
   if (!results || results.length === 0) {
@@ -517,50 +552,10 @@ const displaySearchResults = (results, type) => {
   results.forEach((item) => {
     const li = document.createElement("li");
     li.classList.add("result-item");
-  })
-  /*
-
-    // Create image element (if available)
-    const imageUrl =
-      item.images?.find((img) => img.size === "medium")?.["#text"] || "";
-
-    if (imageUrl) {
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      img.alt = item.name || "Image";
-      li.appendChild(img);
-    }
-
-    // Main text info
-    const title = document.createElement("h3");
-    title.textContent = item.name || item.artist || "Unknown";
-    li.appendChild(title);
-
-    // Add extra info depending on search type
-    if (type === "album" && item.artist) {
-      const artist = document.createElement("p");
-      artist.textContent = `Artist: ${item.artist}`;
-      li.appendChild(artist);
-    } else if (type === "track" && item.artist) {
-      const artist = document.createElement("p");
-      artist.textContent = `Artist: ${item.artist}`;
-      li.appendChild(artist);
-    }
-
-    // Optional link to Last.fm
-    if (item.url) {
-      const link = document.createElement("a");
-      link.href = item.url;
-      link.target = "_blank";
-      link.textContent = "View on Last.fm";
-      li.appendChild(link);
-    }
-
+    li.textContent = item.name || item.artist || "Unknown";
     list.appendChild(li);
   });
-
   resultsContainer.appendChild(list);
-  */
 };
 
 const performSearch = async (query, type) => {
