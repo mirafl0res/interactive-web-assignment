@@ -24,7 +24,8 @@
         <select id="search-type">
           <option value="artist">Artist</option>
           <option value="album">Album</option>
-          <option value="track">Song</option>
+          <option value="track">Track</option>
+          <option value="tag">Tag</option>
         </select>
         <button id="search-btn">Search</button>
         <div role="listbox" id="results-container"></div>
@@ -32,8 +33,8 @@
     </header>
 
     <!-- HOME PAGE -->
-    <h2>Discover Music</h2>
- <section id="home-section" class="hidden">
+    <section id="home-section" class="hidden">
+   <h2>Discover Music</h2>
   <div class="home-buttons">
     <button data-chart="artists">Top Artists</button>
     <button data-chart="tracks">Top Tracks</button>
@@ -53,6 +54,9 @@
 
     <!-- TRACK PAGE -->
     <section id="track-section" class="hidden"></section>
+
+    <!-- TAG PAGE -->
+    <section id="tag-section" class="hidden"></section>
 
     <!-- USER PROFILE -->
     <section id="user-section" class="hidden">
