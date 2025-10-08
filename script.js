@@ -745,8 +745,71 @@ navButtons.forEach(button => {
   });
 });
 
-// Show home page by default
+// --------------------------------
+// Home Page - Load Top Charts
+// --------------------------------
+
+const loadHomePage = async () => {
+  // Load top artists
+  const topArtists = await getChartTopArtists(10);
+  const artistsEl = document.querySelector(".home-top-artists");
+  if (artistsEl && topArtists) {
+    artistsEl.innerHTML = "";
+    topArtists.forEach(artist => {
+      const li = document.createElement("li");
+      li.textContent = artist.name;
+      li.style.cursor = "pointer";
+      li.addEventListener("click", () => {
+        showArtistPage(artist.name);
+      });
+      artistsEl.appendChild(li);
+    });
+  }
+
+  // Load top albums
+  const topAlbums = await getChartTopAlbums(10);
+  const albumsEl = document.querySelector(".home-top-albums");
+  if (albumsEl && topAlbums) {
+    albumsEl.innerHTML = "";
+    topAlbums.forEach(album => {
+      const li = document.createElement("li");
+      li.textContent = `${album.name} - ${album.artist}`;
+      li.style.cursor = "pointer";
+      li.addEventListener("click", () => {
+        showAlbumPage(album.artist, album.name);
+      });
+      albumsEl.appendChild(li);
+    });
+  }
+
+  // Load top tracks
+  const topTracks = await getChartTopTracks(10);
+  const tracksEl = document.querySelector(".home-top-tracks");
+  if (tracksEl && topTracks) {
+    tracksEl.innerHTML = "";
+    topTracks.forEach(track => {
+      const li = document.createElement("li");
+      li.textContent = `${track.name} - ${track.artist}`;
+      tracksEl.appendChild(li);
+    });
+  }
+
+  // Load top tags
+  const topTags = await getChartTopTags(10);
+  const tagsEl = document.querySelector(".home-genres");
+  if (tagsEl && topTags) {
+    tagsEl.innerHTML = "";
+    topTags.forEach(tag => {
+      const li = document.createElement("li");
+      li.textContent = tag.name;
+      tagsEl.appendChild(li);
+    });
+  }
+};
+
+// Show home page by default and load data
 showPage("home");
+loadHomePage();
 
 // Close results when clicking outside
 document.addEventListener("click", (e) => {
