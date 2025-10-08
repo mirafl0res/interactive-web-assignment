@@ -1,13 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Good Vibrations</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="config.js"></script>
     <script src="script.js" defer></script>
-</head>
-<body>
+  </head>
+
+  <body>
+    <header>
+      <h1 id="site-logo">🎵 Good Vibrations</h1>
+      <nav>
+        <button id="home-btn" data-view="home">Home</button>
+        <!-- <button data-view="profile">Profile</button> -->
+      </nav>
+
+      <!-- SEARCH FIELD ALWAYS VISIBLE -->
+<div class="global-search">
+  <label for="search-input" class="sr-only">Search for artist, album, track, or tag</label>
+  <input 
+    type="text" 
+    id="search-input" 
+    placeholder="Search..." 
+    aria-label="Search for artist, album, track, or tag"
+    role="search"
+  />
+  <select id="search-type" aria-label="Select search type">
+    <option value="artist">Artist</option>
+    <option value="album">Album</option>
+    <option value="track">Track</option>
+    <option value="tag">Tag</option>
+  </select>
+  <button id="search-btn">Search</button>
+  <div role="listbox" id="results-container" aria-live="polite"></div>
+</div>
+    </header>
+
+    <!-- HOME PAGE -->
+    <section tabindex="-1" id="home-section" class="hidden">
+      <h2>Top Charts</h2>
+      <div class="home-buttons">
+        <button data-chart="artists">Top Artists</button>
+        <button data-chart="tracks">Top Tracks</button>
+        <button data-chart="tags">Top Tags</button>
+      </div>
+
+      <div id="home-chart-container">
+        <!-- dynamically inserted list will go here -->
+      </div>
+    </section>
+
+    <!-- ARTIST PAGE -->
+    <section tabindex="-1" id="artist-section" class="hidden"></section>
+
+    <!-- ALBUM PAGE -->
+    <section tabindex="-1" id="album-section" class="hidden"></section>
+
+    <!-- TRACK PAGE -->
+    <section tabindex="-1" id="track-section" class="hidden"></section>
+
+    <!-- TAG PAGE -->
+    <section tabindex="-1" id="tag-section" class="hidden"></section>
+
+    <!-- USER PROFILE -->
+    <!-- <section id="user-section" class="hidden">
+      <h2>Your Profile</h2>
+      <p>Liked/rated artists, albums and tracks will show up here.</p>
+      <ul class="profile-artists">
+        <li>Artists here</li>
+      </ul>
+      <ul class="profile-albums">
+        <li>Albums here</li>
+      </ul>
+      <ul class="profile-tracks">
+        <li>Tracks here</li>
+      </ul>
+      <ul class="profile-tags">
+        <li>Tags here</li>
+      </ul>
+    </section> -->
     
-</body>
+  </body>
 </html>

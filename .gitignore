@@ -153,6 +153,8 @@ yarn-error.log*
 # VS Code settings
 .vscode/
 
-# Optional: build/output folders if you use a bundler
-dist/
-build/
+# Local file with API key
+config.js
+
+test.js
+notes.md
