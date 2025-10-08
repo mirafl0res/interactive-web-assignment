@@ -440,7 +440,6 @@ const displaySearchResults = (results, type) => {
   resultsContainer.innerHTML = "";
   setHidden(resultsContainer, false);
 
-
   setHidden(document.getElementById("artist-section"), true);
   setHidden(document.getElementById("album-section"), true);
   setHidden(document.getElementById("track-section"), true);
@@ -471,7 +470,7 @@ const displaySearchResults = (results, type) => {
     }
 
     li.addEventListener("click", async () => {
-      // Hide all sections
+      setHidden(resultsContainer, true);
       setHidden(document.getElementById("artist-section"), true);
       setHidden(document.getElementById("album-section"), true);
       setHidden(document.getElementById("track-section"), true);
@@ -486,7 +485,13 @@ const displaySearchResults = (results, type) => {
             <h2>${info.artist}</h2>
             <p><strong>Listeners:</strong> ${info.listeners}</p>
             <p><strong>Playcount:</strong> ${info.playcount}</p>
-            <div>${info.bioSummary}</div>
+            <div><strong>Bio:</strong> ${info.bioSummary}</div>
+            <div><strong>Tags:</strong> ${info.tags
+              .map((tag) => tag.name)
+              .join(", ")}</div>
+            <div><strong>Similar Artists:</strong> ${info.similarArtists
+              .map((artist) => artist.name)
+              .join(", ")}</div>
             <a href="${info.url}" target="_blank">View on Last.fm</a>
           `;
           setHidden(section, false);
@@ -500,7 +505,13 @@ const displaySearchResults = (results, type) => {
             <p><strong>Artist:</strong> ${info.artist}</p>
             <p><strong>Playcount:</strong> ${info.playcount}</p>
             <p><strong>Release Date:</strong> ${info.releaseDate}</p>
-            <div>${info.wikiSummary}</div>
+            <div><strong>Tracks:</strong> ${info.tracks
+              .map((track) => track.name)
+              .join(", ")}</div>  
+            <div><strong>Bio:</strong> ${info.wikiSummary}</div>
+            <div><strong>Tags:</strong> ${info.tags
+              .map((tag) => tag.name)
+              .join(", ")}</div>
             <a href="${info.url}" target="_blank">View on Last.fm</a>
           `;
           setHidden(section, false);
@@ -515,6 +526,9 @@ const displaySearchResults = (results, type) => {
             <p><strong>Album:</strong> ${info.album}</p>
             <p><strong>Listeners:</strong> ${info.listeners}</p>
             <p><strong>Playcount:</strong> ${info.playcount}</p>
+            <div><strong>Tags:</strong> ${info.tags
+              .map((tag) => tag.name)
+              .join(", ")}</div>
             <a href="${info.url}" target="_blank">View on Last.fm</a>
           `;
           setHidden(section, false);
@@ -548,8 +562,6 @@ searchBtn.addEventListener("click", async () => {
   const { results, type: searchTypeUsed } = await performSearch(query, type);
   displaySearchResults(results, searchTypeUsed);
 });
-
-
 
 // ====== TESTING ======
 const main = async () => {
@@ -601,3 +613,69 @@ const main = async () => {
   const trackTags = await getTrackTopTags("Kanye West", "Stronger");
   console.log(trackTags);
 };
+
+// 1. Function to render a chart (artists / tracks / tags) into home-chart-container
+const renderHomeChart = (items, chartType) => {
+  const container = document.getElementById("home-chart-container");
+  container.innerHTML = ""; // clear previous content
+
+  const list = document.createElement("ul");
+  list.classList.add("home-chart-list");
+
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.classList.add("home-chart-item");
+
+    if (chartType === "artists") {
+      li.textContent = item.name; // artist name
+    } else if (chartType === "tracks") {
+      li.textContent = `${item.name} — ${item.artist}`;
+    } else if (chartType === "tags") {
+      li.textContent = item.name;
+    }
+
+    // Optional: clicking an item navigates you to that section
+    li.addEventListener("click", () => {
+      if (chartType === "artists") {
+        performSearch(item.name, "artist");
+      } else if (chartType === "tracks") {
+        performSearch(item.name, "track");
+      } else if (chartType === "tags") {
+        // you may want a “tag search” logic in the future
+      }
+    });
+
+    list.appendChild(li);
+  });
+
+  container.appendChild(list);
+};
+
+// 3. Call setupHomeButtons at startup
+document.addEventListener("DOMContentLoaded", () => {
+  setHidden(document.getElementById("home-section"), false);
+});
+
+document.querySelectorAll(".home-buttons button").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const chartType = btn.getAttribute("data-chart");
+    // Hide other views / sections
+    setHidden(document.getElementById("artist-section"), true);
+    setHidden(document.getElementById("album-section"), true);
+    setHidden(document.getElementById("track-section"), true);
+    setHidden(document.getElementById("user-section"), true);
+
+    let items = [];
+    const limit = 10;
+
+    if (chartType === "artists") {
+      items = await getChartTopArtists(limit);
+    } else if (chartType === "tracks") {
+      items = await getChartTopTracks(limit);
+    } else if (chartType === "tags") {
+      items = await getChartTopTags(limit);
+    }
+
+    renderHomeChart(items, chartType);
+  });
+});

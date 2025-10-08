@@ -32,32 +32,18 @@
     </header>
 
     <!-- HOME PAGE -->
-    <section id="home-section" class="hidden">
-      <h2>Discover Music</h2>
+    <h2>Discover Music</h2>
+ <section id="home-section" class="hidden">
+  <div class="home-buttons">
+    <button data-chart="artists">Top Artists</button>
+    <button data-chart="tracks">Top Tracks</button>
+    <button data-chart="tags">Top Tags</button>
+  </div>
 
-      <div class="home-content">
-        <!-- Top lists / Explore area -->
-        <h3>Top Artists</h3>
-        <ul class="home-top-artists">
-          <li>Top artists here</li>
-        </ul>
-
-        <h3>Top Albums</h3>
-        <ul class="home-top-albums">
-          <li>Top albums here</li>
-        </ul>
-
-        <h3>Top Tracks</h3>
-        <ul class="home-top-tracks">
-          <li>Top tracks here</li>
-        </ul>
-
-        <h3>Browse by Genre</h3>
-        <ul class="home-genres">
-          <li>Tags (genres) will show up here</li>
-        </ul>
-      </div>
-    </section>
+  <div id="home-chart-container">
+    <!-- dynamically inserted list will go here -->
+  </div>
+</section>
 
     <!-- ARTIST PAGE -->
     <section id="artist-section" class="hidden"></section>
