@@ -21,7 +21,7 @@
   margin: 0;
   padding: 0;
 }
-html,
+
 body {
   height: 100%;
 }
@@ -1124,10 +1124,8 @@ header {
 .tag-section a {
   display: inline-block;
   margin-top: 600px;
-  
   color: var(--accent1);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.3s ease;
-    
-    }
+}
