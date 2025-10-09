@@ -802,7 +802,6 @@ const siteLogo = document.getElementById("site-logo");
     setHidden(document.getElementById("user-section"), true);
     setHidden(resultsContainer, true);
     setHidden(document.getElementById("home-section"), false);
-    document.getElementById("home-chart-container").innerHTML = "";
   });
 });
 
