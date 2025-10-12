@@ -1,50 +1,23 @@
-# Examinationsuppgift – Tillgänglig webbsida med interaktivitet
+# Projektbeskrivning
+Detta projekt utgör vår examinationsuppgift i Kurs 1: Bootcamp, som en del av utbildningen Fullstackutvecklare Open Source vid Chas Academy. Projektets syfte är att utveckla en responsiv och tillgänglig webbsida för en fiktiv organisation.
 
-Skapa en **responsiv och tillgänglig webbsida** för en fiktiv organisation (t.ex. bibliotek, café, skolaktivitet, miljöorganisation) med både **HTML + CSS** och **JavaScript**-funktionalitet.
+Vi har valt att skapa en **musikutforskningsapp** som använder [Last.fm Music Discovery API](https://www.last.fm/api) för att hämta och presentera data om musik.
 
----
+Användaren kan söka efter musik, utforska olika genrer och ta del av olika topplistor. För artister finns även tips på liknande artister.
 
-## Exempel på interaktiva funktioner
-- Formulär med **feedback** och **validering** via JavaScript  
-- Enkel **to-do-/bokningslista** som sparas i `localStorage`  
-- **API-anrop** till öppen datakälla (väder, hundbilder, böcker)  
-- **Produkter** som kan läggas i varukorg  
+## Funktionalitet
+- Sök efter musik (artist, album, låt eller tagg/genre)
+- Visa topplistor för artister, låtar och taggar/genrer
+- Få tips på liknande artister
 
----
+## Teknik
+- HTML, CSS och JavaScript (utan ramverk)
+- [Last.fm Music Discovery API](https://www.last.fm/api)
 
-## Kravspecifikation
-
-### Teknisk funktionalitet
-- **HTML:** semantiska element, korrekt struktur  
-- **CSS:** responsiv design för mobil, surfplatta och desktop  
-- **JavaScript:** minst en interaktiv funktion (formulärvalidering, DOM-manipulation, API-anrop etc.)
-
-### Tillgänglighet (WCAG 2.2)
-- Kontraster enligt minimikrav  
-- Alternativtext för bilder  
-- Tangentbordsnavigering  
-- Meningsfulla länktexter  
-
-### Versionshantering
-- Projekt på **GitHub**  
-- Minst **5 commits** som visar stegvis utveckling  
-- **README** med projektbeskrivning och test-/körinstruktioner  
-
-### Individuell reflektion (1 sida)
-- Motivera **design- och tillgänglighetsval**  
-- Beskriv användning av **Git**  
-- Reflektera över **arbetssätt**, grupporganisation, utmaningar och lärdomar  
-
----
-
-## Examination & Bedömning
-- **Godkänt (G):** alla krav uppfyllda  
-- **Väl godkänt (VG):**  
-  - Tillgänglighetsval väl motiverade utifrån användarbehov  
-  - Git-historik välstrukturerad och dokumenterad  
-  - Reflektion visar insikt om **samarbete, ansvar och självledarskap**  
-
----
-
-**Presentation:** torsdagen 9 oktober, visa appens funktion, syfte och kodöversikt.  
-**Reflektion:** lämnas in på Canvas senast 12 oktober kl 23.59
+## Så här kör du projektet
+1. Klona repot:
+```bash
+git clone https://github.com/mirafl0res/interactive-web-assignment.git
+```
+2. Öppna projektmappen.
+3. Starta webbplatsen genom att öppna index.html i en webbläsare.
